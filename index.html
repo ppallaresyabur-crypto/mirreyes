@@ -18,7 +18,7 @@ body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Not
 .mi .h{color:#ffffffcc}
 .mi .y{font-size:72px;font-weight:800;line-height:1.05;margin-top:4px;white-space:nowrap}
 .mi .d{font-size:40px;font-weight:700;white-space:nowrap}.mi .d span{font-weight:400;opacity:.85}
-.bn{font-size:34px;font-weight:700;display:none;align-self:flex-start;background:#ffffff26;border-radius:12px;padding:4px 14px;margin-top:4px}.bn.on{display:block}
+.bn{font-size:34px;font-weight:700;display:none;align-self:flex-start;background:#ffffff26;border-radius:12px;padding:4px 14px;margin-top:4px}.bn.on{display:block}.sac{font-size:28px;opacity:.92;margin-top:-4px}.pill.mx{background:#fff!important;color:#1d2733;border-left:10px solid #006847;border-right:10px solid #ce1126}.na{display:none;font-size:22px;opacity:.9}.na.on{display:block}
 .ep{margin-top:auto;background:#ffffff22;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .ep.fiesta{background:#ffffff;color:#1d2733;box-shadow:0 0 0 4px #ffd54f}
 .ep .cel{font-size:36px;font-weight:700;line-height:1.15}
@@ -48,7 +48,7 @@ body{grid-template-columns:1fr;grid-template-rows:none;padding:12px;gap:12px}
 .clk,.w,.mi,.av,footer{grid-column:auto;grid-row:auto}
 .clk b{font-size:60px}.clk .fe{font-size:20px}.clk .fe small{white-space:normal}
 .w .ico{font-size:44px}.w b{font-size:50px}.w .d{font-size:17px;white-space:normal}
-.mi .y{font-size:44px;white-space:normal}.bn{font-size:24px}.mi .d{font-size:28px;white-space:normal}
+.mi .y{font-size:44px;white-space:normal}.bn{font-size:24px}.sac{font-size:22px}.mi .d{font-size:28px;white-space:normal}
 .ep .cel{font-size:26px}.ep .meta{font-size:18px}.ep .nt{font-size:19px}.mi{overflow:visible}
 .tu .n{font-size:36px}.ds b{font-size:60px}
 .aviso{font-size:19px;white-space:normal}
@@ -65,7 +65,10 @@ footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px
   <div class="h" id="mDia">Mañana</div>
   <div class="y" id="mHay"></div>
   <div class="d" id="mDet"></div>
+  <div class="sac" id="mSac"></div>
   <div class="bn" id="mBen"></div>
+  <div class="na" id="mNota"></div>
+  <div class="na" id="mExtra"></div>
   <div class="ep" id="mEp"></div>
 </div>
 <div class="t tu"><div class="h">De turno hoy</div><div class="n" id="tHoy">—</div><div class="m" id="tMan"></div></div>
@@ -893,6 +896,8 @@ function avisoActivo(a,now){const hoy=ymd(now),m=now.getHours()*60+now.getMinute
  if(hoy<a[0]||(a[2]&&hoy>a[2]))return false;
  if(a[5]==="Fin de semana"&&![0,6].includes(now.getDay()))return false;
  if(a[1]&&m<mins(a[1]))return false; if(a[3]&&m>=mins(a[3]))return false; return true;}
+const SAC={BCC:"P. Bernardo",VST:"P. Vicente",JHV:"P. José",PPC:"P. Pablo",JPW:"P. Juan Pablo",MST:"P. Miguel"};
+const GLOS=t=>String(t).replace(/\bExSi\b\.?/g,"Exposición simple").replace(/\bExSo\b\.?/g,"Exposición solemne").replace(/\bIp\b/g,"Indulgencia").replace(/conf sm/gi,"Confesiones").replace(/\bVela\b(?! 21)/g,"Vela 21:00").replace(/\(sin c[oó]digo[^)]*\)/gi,"");
 const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+1);
  const m=now.getHours()*60+now.getMinutes();
@@ -905,12 +910,21 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";mDet.textContent="";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";mDet.innerHTML="";}
  else{B.className="t mi si";mHay.textContent="✓ Sí hay Misa";mDet.textContent=mm[2]||"";}
- const bn=mm&&mm[5];if(bn){const b=bn.match(/^(bosque)\s*(.*)$/i);mBen.textContent="✦ Bendición "+(b?b[2]+" · Bosque":bn);mBen.className="bn on";}else{mBen.className="bn";mBen.textContent="";}
+ const bn=mm&&mm[5];if(bn){const b=bn.match(/^(bosque)\s+(.*)$/i);let t=(b?b[2]:bn).trim();
+  if(/^[\d:]+(\s*[-–]\s*[\d:]+)?$/.test(t))t="Bendición "+t.replace(/\s*[-–].*/,"");
+  mBen.textContent="✦ "+t+(b?" · Bosque":"")+(SAC[mm[8]]?" · "+SAC[mm[8]]:"");mBen.className="bn on";}else{mBen.className="bn";mBen.textContent="";}
+ const na=mm&&mm[6],epn=((EPACTA[ymd(man)]||[])[4]||"").toLowerCase();
+ if(na&&!epn.includes(na.toLowerCase())){mNota.textContent=na;mNota.className="na on";}else{mNota.className="na";mNota.textContent="";}
  if(bn&&mm[0]==="No")mDet.textContent="";
+ const sc=mm&&mm[0]!=="No"&&SAC[mm[7]];mSac.textContent=sc||"";mSac.style.display=sc?"":"none";
+ const epm=EPACTA[ymd(man)]||[],ex=[];
+ if(epm[3]==="Fiesta A")ex.push(bn?"Aperitivo 14:10 · Comida 14:30":"Bendición 13:50 · Aperitivo 14:10 · Comida 14:30");
+ if(epm[6])ex.push("Vela 21:00");
+ mExtra.textContent=ex.join(" · ");mExtra.className="na"+(ex.length?" on":"");
  const ep=EPACTA[ymd(man)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
-   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(ep[4]?`<div class="nt">${esc(ep[4])}</div>`:"");}
+   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+(ep[5]?`<span class="pill mx">Fiesta en México</span>`:"")+`</div>`+(ep[4]?`<div class="nt">${esc(GLOS(ep[4]))}</div>`:"");}
  else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
  E.style.zoom=1;if(innerWidth>820){let z=1;while(B.scrollHeight>B.clientHeight+1&&z>0.6){z-=.05;E.style.zoom=z;}}
  // Turno
@@ -929,6 +943,7 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  // Avisos
  const L=listaAvisos;L.innerHTML="";
  const act=AVISOS.filter(a=>avisoActivo(a,now));
+ if((EPACTA[ymd(now)]||[])[6])act.push(["","","","","Hoy: Vela 21:00","Vela","Sí","Normal"]);
  VISITANTES.filter(v=>v[0]<=ymd(now)&&ymd(now)<=(v[4]||v[0])).forEach(v=>act.push(["","","","","Hoy nos visita: "+v[1]+(v[4]&&v[4]!==v[0]&&ymd(now)===v[4]?" (se va hoy)":"")+(v[2]?" · "+v[2]:""),"Visita","Sí","Normal"]));
  if(Q.get("demo")==="grande")act.push(["","","","",EJEMPLO_GRANDE,"","","Grande",true]);
  const vis=act.filter(a=>(a[7]||"Normal")!=="Grande").sort((x,y)=>(x[7]==="Chico")-(y[7]==="Chico"));
@@ -953,9 +968,10 @@ const T={
  Misa:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f)return;const no=/^no/i.test(x[1]||"");let h=x[2]||"";
   const nu=h.match(/NU\s*([\d:]+\s*-\s*[\d:]+)/i);const bo=/\(bosque\)/i.test(x[1]||"")||(/^\s*bosque/i.test(h)&&!nu);
   h=nu?nu[1]:h.replace(/bosque/i,"").trim();
-  o[f]=[no?"No":"Sí",h.replace(/\s*-\s*/,"–"),bo?"Bosque":"Mirreyes","",x[4]||"",(x[5]||"").trim()];});if(Object.keys(o).length)MISA=o;},
+  const d=x[3]||"";const pn=d.match(/NU\s+([A-Z]{2,4})/),pb=d.match(/Bosque\s+([A-Z]{2,4})/);const ini=bo?(pb?pb[1]:(d.match(/[A-Z]{3}/)||[""])[0]):(pn?pn[1]:(/^\s*bosque/i.test(d)?"":(d.match(/[A-Z]{3}/)||[""])[0]));
+  o[f]=[no?"No":"Sí",h.replace(/\s*-\s*/,"–"),bo?"Bosque":"Mirreyes","",x[4]||"",(x[5]||"").trim(),(x[6]||"").trim(),ini,(x[7]||"").trim()];});if(Object.keys(o).length)MISA=o;},
  Epacta:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f||!x[1])return;const n=x[4]||"";const fa=(n.match(/Fiesta [A-D]\b/)||[""])[0];
-  o[f]=[x[1],x[2]||"",x[3]||"",fa,n.replace(/\s*Fiesta [A-D]\b/,"").trim()];});if(Object.keys(o).length)EPACTA=o;},
+  const rk=/sin c[oó]digo/i.test(x[3]||"")?"":(x[3]||"");o[f]=[x[1],x[2]||"",rk,fa,n.replace(/\s*Fiesta [A-D]\b/,"").replace(/\s*\(nacional\)/i,"").replace(/\(sin c[oó]digo[^)]*\)/gi,"").trim(),/\(nacional\)/i.test(n),/\bVela\b/.test(n)];});if(Object.keys(o).length)EPACTA=o;},
  Turnos:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(/^\d{4}-/.test(f)&&x[2]&&(!x[1]||/turno/i.test(x[1])))o[f]=x[2];});if(Object.keys(o).length)TURNOS=o;},
  Comidas:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!/^\d{4}-/.test(f))return;const n=v=>v===""||isNaN(+v)?undefined:+v;o[f]={desayuno:n(x[1]),comida:n(x[2]),cena:n(x[3])};});COMIDAS=o;},
  Visitantes:r=>{VISITANTES=r.filter(x=>/^\d{4}-/.test(F8(x[0]))&&x[1]).map(x=>[F8(x[0]),x[1],x[2]||"","",F8(x[4]||"")]);},
