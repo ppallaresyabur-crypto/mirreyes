@@ -896,7 +896,7 @@ function avisoActivo(a,now){const hoy=ymd(now),m=now.getHours()*60+now.getMinute
  if(hoy<a[0]||(a[2]&&hoy>a[2]))return false;
  if(a[5]==="Fin de semana"&&![0,6].includes(now.getDay()))return false;
  if(a[1]&&m<mins(a[1]))return false; if(a[3]&&m>=mins(a[3]))return false; return true;}
-const SAC={BCC:"P. Bernardo",VST:"P. Vicente",JHV:"P. José",PPC:"P. Pablo",JPW:"P. Juan Pablo",MST:"P. Miguel"};
+const SAC={BCC:"P. Bernardo",VST:"P. Vicente",JHV:"P. Josefo",PPC:"P. Pablo",JPW:"P. Juan Pablo",MST:"P. Miguel",FUC:"P. Quico"};
 const GLOS=t=>String(t).replace(/\bExSi\b\.?/g,"Exposición simple").replace(/\bExSo\b\.?/g,"Exposición solemne").replace(/\bIp\b/g,"Indulgencia").replace(/conf sm/gi,"Confesiones").replace(/\bVela\b(?! 21)/g,"Vela 21:00").replace(/\(sin c[oó]digo[^)]*\)/gi,"");
 const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+1);
