@@ -977,7 +977,7 @@ const T={
  Visitantes:r=>{VISITANTES=r.filter(x=>/^\d{4}-/.test(F8(x[0]))&&x[1]).map(x=>[F8(x[0]),x[1],x[2]||"","",F8(x[4]||"")]);},
  Avisos:r=>{AVISOS=r.filter(x=>x[4]&&!/ver Comidas/i.test(x[4])).map(x=>[F8(x[0]),HM(x[1]),F8(x[2]),HM(x[3]),x[4],x[5]||"",x[6]||"",x[7]||"Normal"]);},
  "Cumpleaños":r=>{const o=[];r.forEach(x=>{const m=(x[0]||"").toLowerCase().match(/^(\d{1,2})-([a-z]{3})/);if(m&&x[1]&&MES3[m[2]])o.push([String(MES3[m[2]]).padStart(2,"0")+"-"+m[1].padStart(2,"0"),x[1]]);});if(o.length)CUMPLES=o;},
- Horario:r=>{const h={lv:[],s:[],d:[]};r.forEach(x=>{if(!x[0]||!x[2]||!/^(Oraci|Misa|Desayuno|Comida|Cena|Medita)/i.test(x[0]))return;const k=/lunes/i.test(x[1])?"lv":/s[aá]bado/i.test(x[1])?"s":/domingo/i.test(x[1])?"d":null;if(!k)return;
+ Horario:r=>{const h={lv:[],s:[],d:[]};r.forEach(x=>{if(!x[0]||!x[2]||!/^(Oraci|Misa|Desayuno|Comida|Cena|Medita|Preces)/i.test(x[0]))return;const k=/lunes/i.test(x[1])?"lv":/s[aá]bado/i.test(x[1])?"s":/domingo/i.test(x[1])?"d":null;if(!k)return;
   h[k].push([x[0].replace(/ semanal/i,""),HM(x[2])+(x[3]?"–"+HM(x[3]):"")]);});if(h.lv.length)HORARIO=h;}
 };
 async function datos(){let ok=0,err=[];await Promise.all(Object.keys(T).map(async n=>{try{T[n](await tab(n));ok++;}catch(e){err.push(n);console.log(e);}}));
