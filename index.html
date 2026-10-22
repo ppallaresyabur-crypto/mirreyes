@@ -13,21 +13,21 @@ body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Not
 .clk b{font-size:90px;line-height:1}
 .w{grid-column:span 2;background:linear-gradient(135deg,#4fa3e0,#7cc4f0);color:#fff;flex-direction:row;align-items:center;gap:20px}
 .w .ico{font-size:64px}.w b{font-size:72px}.w .d{font-size:22px;line-height:1.5;white-space:nowrap}
-.mi{grid-column:span 2;grid-row:span 2;color:#fff;gap:8px}
+.mi{grid-column:span 2;grid-row:span 2;color:#fff;gap:6px}
 .mi.si{background:#2e7d32}.mi.no{background:#c62828}.mi.na{background:#607080}
 .mi .h{color:#ffffffcc}
 .mi .y{font-size:72px;font-weight:800;line-height:1.05;margin-top:4px;white-space:nowrap}
 .mi .d{font-size:40px;font-weight:700;white-space:nowrap}.mi .d span{font-weight:400;opacity:.85}
 .ep{margin-top:auto;background:#ffffff22;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .ep.fiesta{background:#ffffff;color:#1d2733;box-shadow:0 0 0 4px #ffd54f}
-.ep .cel{font-size:31px;font-weight:700;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ep .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:21px}
+.ep .cel{font-size:36px;font-weight:700;line-height:1.15}
+.ep .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:25px}
 .dot{display:inline-block;width:24px;height:24px;border-radius:50%;border:2px solid #0003;vertical-align:middle;margin-right:6px}
 .pill{border-radius:999px;padding:3px 12px;font-weight:700;background:#ffffff33;white-space:nowrap}
 .ep.fiesta .pill{background:#eef1f5}
 .pill.fa{background:#ffd54f!important;color:#3d2c00}
 .pill.rk{background:#1d2733!important;color:#ffd54f}
-.ep .nt{font-size:20px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ep .nt{font-size:25px;line-height:1.25;opacity:.95}
 .tu .n{font-size:46px;font-weight:700;margin-top:6px;white-space:nowrap}
 .tu .m{font-size:23px;color:#6b7785;margin-top:auto;white-space:nowrap}
 .ds{background:#fff}.ds.on{background:#ffb300}.ds.on .h{color:#6b4b00}
@@ -48,7 +48,7 @@ body{grid-template-columns:1fr;grid-template-rows:none;padding:12px;gap:12px}
 .clk b{font-size:60px}.clk .fe{font-size:20px}.clk .fe small{white-space:normal}
 .w .ico{font-size:44px}.w b{font-size:50px}.w .d{font-size:17px;white-space:normal}
 .mi .y{font-size:44px;white-space:normal}.mi .d{font-size:28px;white-space:normal}
-.ep .cel{font-size:22px}.ep .meta{font-size:16px}.ep .nt{white-space:normal;font-size:16px}
+.ep .cel{font-size:26px}.ep .meta{font-size:18px}.ep .nt{font-size:19px}.mi{overflow:visible}
 .tu .n{font-size:36px}.ds b{font-size:60px}
 .aviso{font-size:19px;white-space:normal}
 footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px 0}
@@ -902,12 +902,13 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  const mm=MISA[ymd(man)],B=misaBox;
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";mDet.textContent="";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";mDet.innerHTML="";}
- else{B.className="t mi si";mHay.textContent="✓ Sí hay Misa";mDet.innerHTML=`${mm[1]} <span>·</span> ${mm[2]}`;}
+ else{B.className="t mi si";mHay.textContent="✓ Sí hay Misa";mDet.textContent=mm[2]||"";}
  const ep=EPACTA[ymd(man)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
    (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(ep[4]?`<div class="nt">${esc(ep[4])}</div>`:"");}
  else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
+ E.style.zoom=1;if(innerWidth>820){let z=1;while(B.scrollHeight>B.clientHeight+1&&z>0.6){z-=.05;E.style.zoom=z;}}
  // Turno
  tHoy.textContent=NOMBRE(TURNOS[ymd(now)]||"—");const tm=TURNOS[ymd(man)];tMan.textContent=tm?"Mañana: "+NOMBRE(tm):"";
  // Lugares: cena de hoy (sáb/dom en la comida) o desayuno de mañana (desde 20:00)
