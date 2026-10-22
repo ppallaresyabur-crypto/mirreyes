@@ -30,7 +30,7 @@ body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Not
 .pill.rk{background:#1d2733!important;color:#ffd54f}
 .ep .nt{font-size:25px;line-height:1.25;opacity:.95}
 .tu .n{font-size:42px;font-weight:700;margin-top:6px;line-height:1.1}
-.adm{grid-column:span 2;flex-direction:row;align-items:center;gap:26px;padding:8px 20px;white-space:nowrap}.adm{flex-direction:column;align-items:flex-start;gap:4px;justify-content:center}.adm .h{font-size:15px}.adm #tAd{display:flex;flex-wrap:wrap;gap:2px 24px;font-size:21px;line-height:1.3;overflow:hidden}.adm.vac{opacity:.6}
+.adm{grid-column:span 2;flex-direction:row;align-items:center;gap:26px;padding:8px 20px;white-space:nowrap}.adm{flex-direction:column;align-items:flex-start;gap:4px;justify-content:center}.adm .h{font-size:15px}.adm #tAd{display:flex;flex-wrap:wrap;gap:0 20px;font-size:19px;line-height:1.25;overflow:hidden}.adm.vac{opacity:.6}
 .tu .m{font-size:23px;color:#6b7785;margin-top:auto;white-space:nowrap}
 .ds{background:#fff}.ds.on{background:#ffb300}.ds.on .h{color:#6b4b00}
 .ds b{font-size:80px;line-height:1;margin-top:6px}.ds span{font-size:21px}
@@ -948,7 +948,14 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  // Avisos
  const L=listaAvisos;L.innerHTML="";
  const act=AVISOS.filter(a=>avisoActivo(a,now));
- {const dn=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][now.getDay()];const it=ADMIN.filter(a=>a[1].includes(dn)).map(a=>a[0].charAt(0).toUpperCase()+a[0].slice(1)+(a[2]?" "+a[2]:""));tAd.innerHTML=it.map(t=>"<div>"+(/^Limpieza/i.test(t)?"🧹 ":"🧺 ")+t.replace(/^Limpieza zona (\w)/i,(m,c)=>"Limpieza "+c)+"</div>").join("")||"<div style=\"color:#9aa5b1\">Nada hoy</div>";}
+ {const DN=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"],dn=DN[now.getDay()],dm=DN[man.getDay()];
+  const des=[9*60+45,8*60+30,8*60+30,8*60+30,8*60+30,8*60+30,8*60+45][now.getDay()];
+  const lim=a=>/^Limpieza/i.test(a[0]),nm=a=>{const t=a[0].replace(/^Limpieza zona (\w)/i,(x,c)=>"Limpieza "+c);return t.charAt(0).toUpperCase()+t.slice(1);};
+  const fin=a=>{const q=String(a[2]).match(/(\d{1,2}):(\d{2})\D*$/);return q?(+q[1])*60+(+q[2]):24*60;};
+  const it=[];
+  ADMIN.forEach(a=>{if(!a[1].includes(dn))return;if(lim(a)){if(m<fin(a))it.push("🧹 "+nm(a)+(a[2]?" "+a[2]:""));}else if(m<des)it.push("🧺 "+nm(a));});
+  ADMIN.forEach(a=>{if(!lim(a)&&a[1].includes(dm))it.push("🧺 Mañana: "+nm(a).charAt(0).toLowerCase()+nm(a).slice(1));});
+  tAd.innerHTML=it.map(t=>"<div>"+t+"</div>").join("")||"<div style=\"color:#9aa5b1\">Nada pendiente</div>";}
  if((EPACTA[ymd(now)]||[])[6])act.push(["","","","","Hoy: Vela 21:00","Vela","Sí","Normal"]);
  VISITANTES.filter(v=>v[0]<=ymd(now)&&ymd(now)<=(v[4]||v[0])).forEach(v=>act.push(["","","","","Hoy nos visita: "+v[1]+(v[4]&&v[4]!==v[0]&&ymd(now)===v[4]?" (se va hoy)":"")+(v[2]?" · "+v[2]:""),"Visita","Sí","Normal"]));
  if(Q.get("demo")==="grande")act.push(["","","","",EJEMPLO_GRANDE,"","","Grande",true]);
