@@ -74,7 +74,7 @@ footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px
 </div>
 <div class="t tu"><div class="h">De turno hoy</div><div class="n" id="tHoy">—</div><div class="m" id="tMan"></div></div>
 <div class="t ds" id="dsBox"><div class="h" id="dsH">Desayuno mañana</div><b id="dsN">—</b><span id="dsS">lugares</span></div>
-<div class="t adm" id="admBox"><div class="h">Administración</div><div id="tAd"></div></div>
+<div class="t adm" id="admBox"><div class="h" id="admH">Administración</div><div id="tAd"></div></div>
 <div class="t av"><div class="h">Avisos</div><div id="listaAvisos" style="display:flex;flex-direction:column;gap:6px;margin-top:4px"></div></div>
 <footer id="tira"></footer>
 <div id="overlay"></div><div id="estado"></div>
@@ -942,9 +942,12 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  const sab=now.getDay()===6,dom=now.getDay()===0;
  let F=HORARIO&&HORARIO[dom?"d":sab?"s":"lv"];if(F&&F.length)F=F.map(x=>[x[0],x[1]]);else F=dom?[["Meditación","8:30"],["Misa","9:00"],["Desayuno","9:45"]]:sab?[["Oración","7:30"],["Misa","8:00"],["Desayuno","8:45"]]:[["Oración","7:15"],["Misa","7:45"],["Desayuno","8:30"]];
  if(!(HORARIO&&HORARIO[dom?"d":sab?"s":"lv"]&&HORARIO[dom?"d":sab?"s":"lv"].length))F.push(["Comida","14:30"],["Cena","20:20–20:50"]);
+ {const seg=d=>{const x=new Date(d);return x.getDay()===0&&x.getDate()>=8&&x.getDate()<=14;};const ma=new Date(now);ma.setDate(now.getDate()+1);
+  if(seg(now))F=[["Meditación","8:30"],["Misa","9:00"],["Desayuno","9:45"],["Charla","11:00"],["Rosario","12:15"],["Meditación","13:15"],["Bendición","13:45"]];
+  else if(now.getDay()===6&&seg(ma)){F=[["Comida","14:30"],["Cena","20:20"],["Preces","20:50"],["Meditación y Examen","20:55"]];}}
  const ni=F.findIndex(x=>mins(x[1].split("–")[0])>m);
  const md=ymd(now).slice(5),cu=CUMPLES.map(c=>[c[0]>=md?c[0]:"x"+c[0],c]).sort()[0];
- tira.innerHTML=F.map((x,i)=>`<span class="${i===ni?"on":""}">${x[0]} ${x[1]}</span>`).join("")+(cu?`<span class="cu">🎂 ${cu[1][1]} · ${+cu[1][0].slice(3)} ${MESES[+cu[1][0].slice(0,2)-1].slice(0,3)}</span>`:"");
+ tira.innerHTML=F.map((x,i)=>`<span class="${i===ni?"on":""}">${x[0]} ${x[1]}</span>`).join("")+(cu&&!F.some(x=>x[0]==="Retiro:")?`<span class="cu">🎂 ${cu[1][1]} · ${+cu[1][0].slice(3)} ${MESES[+cu[1][0].slice(0,2)-1].slice(0,3)}</span>`:"");
  // Avisos
  const L=listaAvisos;L.innerHTML="";
  const act=AVISOS.filter(a=>avisoActivo(a,now));
@@ -956,6 +959,9 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
   ADMIN.forEach(a=>{if(!a[1].includes(dn))return;if(lim(a)){if(m<fin(a))it.push("🧹 "+nm(a)+(a[2]?" "+a[2]:""));}else if(m<des)it.push("🧺 "+nm(a));});
   ADMIN.forEach(a=>{if(!lim(a)&&a[1].includes(dm))it.push("🧺 Mañana: "+nm(a).charAt(0).toLowerCase()+nm(a).slice(1));});
   tAd.innerHTML=it.map(t=>"<div>"+t+"</div>").join("")||"<div style=\"color:#9aa5b1\">Nada pendiente</div>";}
+  {const seg=d=>d.getDay()===0&&d.getDate()>=8&&d.getDate()<=14;const ma2=new Date(now);ma2.setDate(now.getDate()+1);
+   const rt=(seg(now)&&m<14*60)||(now.getDay()===6&&seg(ma2)&&m>=14*60+30);
+   admH.style.display=rt?"none":"";admBox.style.background=rt?"#2e5d8a":"";if(rt)tAd.innerHTML='<div style="font-size:36px;font-weight:700;color:#fff">🕊️ Retiro mensual</div>';}
  if((EPACTA[ymd(now)]||[])[6])act.push(["","","","","Hoy: Vela 21:00","Vela","Sí","Normal"]);
  VISITANTES.filter(v=>v[0]<=ymd(now)&&ymd(now)<=(v[4]||v[0])).forEach(v=>act.push(["","","","","Hoy nos visita: "+v[1]+(v[4]&&v[4]!==v[0]&&ymd(now)===v[4]?" (se va hoy)":"")+(v[2]?" · "+v[2]:""),"Visita","Sí","Normal"]));
  if(Q.get("demo")==="grande")act.push(["","","","",EJEMPLO_GRANDE,"","","Grande",true]);
