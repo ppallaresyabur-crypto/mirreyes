@@ -907,24 +907,26 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  reloj.textContent=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
  const h=MISA[ymd(now)];
  fecha.innerHTML=`${DIAS[now.getDay()][0].toUpperCase()+DIAS[now.getDay()].slice(1)}<br>${now.getDate()} de ${MESES[now.getMonth()]}`;
+ // Misa: hoy hasta que termine, luego mañana
+ const fM=(h&&h[0]!=="No"&&(String(h[1]).match(/(\d{1,2}):(\d{2})\D*$/)))||null;const corte=fM?(+fM[1])*60+(+fM[2]):600;const esHoy=m<corte,mD=esHoy?now:man;
  // Misa de mañana
- mDia.textContent=`Mañana · ${DIAS[man.getDay()]} ${man.getDate()}`;
- const mm=MISA[ymd(man)],B=misaBox;
+ mDia.textContent=`${esHoy?"Hoy":"Mañana"} · ${DIAS[mD.getDay()]} ${mD.getDate()}`;
+ const mm=MISA[ymd(mD)],B=misaBox;
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";mDet.textContent="";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";mDet.innerHTML="";}
  else{B.className="t mi si";mHay.textContent="✓ Sí hay Misa";mDet.textContent=mm[2]||"";}
  const bn=mm&&mm[5];if(bn){const b=bn.match(/^(bosque)\s+(.*)$/i);let t=(b?b[2]:bn).trim();
   if(/^[\d:]+(\s*[-–]\s*[\d:]+)?$/.test(t))t="Bendición "+t.replace(/\s*[-–].*/,"");
   mBen.textContent="✦ "+t+(b?" · Bosque":"")+(SAC[mm[8]]?" · "+SAC[mm[8]]:"");mBen.className="bn on";}else{mBen.className="bn";mBen.textContent="";}
- const na=mm&&mm[6],epn=((EPACTA[ymd(man)]||[])[4]||"").toLowerCase();
+ const na=mm&&mm[6],epn=((EPACTA[ymd(mD)]||[])[4]||"").toLowerCase();
  if(na&&!epn.includes(na.toLowerCase())){mNota.textContent=na;mNota.className="na on";}else{mNota.className="na";mNota.textContent="";}
  if(bn&&mm[0]==="No")mDet.textContent="";
  const sc=mm&&mm[0]!=="No"&&SAC[mm[7]];mSac.textContent=sc||"";mSac.style.display=sc?"":"none";
- const epm=EPACTA[ymd(man)]||[],ex=[];
+ const epm=EPACTA[ymd(mD)]||[],ex=[];
  if(epm[3]==="Fiesta A")ex.push(bn?"Aperitivo 14:10 · Comida 14:30":"Bendición 13:50 · Aperitivo 14:10 · Comida 14:30");
  if(epm[6])ex.push("Vela 21:00");
  mExtra.textContent=ex.join(" · ");mExtra.className="na"+(ex.length?" on":"");
- const ep=EPACTA[ymd(man)],E=mEp;
+ const ep=EPACTA[ymd(mD)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
    (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+(ep[5]?`<span class="pill mx">Fiesta en México</span>`:"")+`</div>`+(ep[4]?`<div class="nt">${esc(GLOS(ep[4]))}</div>`:"");}
