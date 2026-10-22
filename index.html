@@ -18,6 +18,7 @@ body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Not
 .mi .h{color:#ffffffcc}
 .mi .y{font-size:72px;font-weight:800;line-height:1.05;margin-top:4px;white-space:nowrap}
 .mi .d{font-size:40px;font-weight:700;white-space:nowrap}.mi .d span{font-weight:400;opacity:.85}
+.bn{font-size:34px;font-weight:700;display:none;align-self:flex-start;background:#ffffff26;border-radius:12px;padding:4px 14px;margin-top:4px}.bn.on{display:block}
 .ep{margin-top:auto;background:#ffffff22;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .ep.fiesta{background:#ffffff;color:#1d2733;box-shadow:0 0 0 4px #ffd54f}
 .ep .cel{font-size:36px;font-weight:700;line-height:1.15}
@@ -28,7 +29,7 @@ body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Not
 .pill.fa{background:#ffd54f!important;color:#3d2c00}
 .pill.rk{background:#1d2733!important;color:#ffd54f}
 .ep .nt{font-size:25px;line-height:1.25;opacity:.95}
-.tu .n{font-size:46px;font-weight:700;margin-top:6px;white-space:nowrap}
+.tu .n{font-size:42px;font-weight:700;margin-top:6px;line-height:1.1}
 .tu .m{font-size:23px;color:#6b7785;margin-top:auto;white-space:nowrap}
 .ds{background:#fff}.ds.on{background:#ffb300}.ds.on .h{color:#6b4b00}
 .ds b{font-size:80px;line-height:1;margin-top:6px}.ds span{font-size:21px}
@@ -47,7 +48,7 @@ body{grid-template-columns:1fr;grid-template-rows:none;padding:12px;gap:12px}
 .clk,.w,.mi,.av,footer{grid-column:auto;grid-row:auto}
 .clk b{font-size:60px}.clk .fe{font-size:20px}.clk .fe small{white-space:normal}
 .w .ico{font-size:44px}.w b{font-size:50px}.w .d{font-size:17px;white-space:normal}
-.mi .y{font-size:44px;white-space:normal}.mi .d{font-size:28px;white-space:normal}
+.mi .y{font-size:44px;white-space:normal}.bn{font-size:24px}.mi .d{font-size:28px;white-space:normal}
 .ep .cel{font-size:26px}.ep .meta{font-size:18px}.ep .nt{font-size:19px}.mi{overflow:visible}
 .tu .n{font-size:36px}.ds b{font-size:60px}
 .aviso{font-size:19px;white-space:normal}
@@ -64,6 +65,7 @@ footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px
   <div class="h" id="mDia">Mañana</div>
   <div class="y" id="mHay"></div>
   <div class="d" id="mDet"></div>
+  <div class="bn" id="mBen"></div>
   <div class="ep" id="mEp"></div>
 </div>
 <div class="t tu"><div class="h">De turno hoy</div><div class="n" id="tHoy">—</div><div class="m" id="tMan"></div></div>
@@ -903,6 +905,8 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";mDet.textContent="";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";mDet.innerHTML="";}
  else{B.className="t mi si";mHay.textContent="✓ Sí hay Misa";mDet.textContent=mm[2]||"";}
+ const bn=mm&&mm[5];if(bn){const b=bn.match(/^(bosque)\s*(.*)$/i);mBen.textContent="✦ Bendición "+(b?b[2]+" · Bosque":bn);mBen.className="bn on";}else{mBen.className="bn";mBen.textContent="";}
+ if(bn&&mm[0]==="No")mDet.textContent="";
  const ep=EPACTA[ymd(man)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
@@ -946,8 +950,10 @@ const F8=d=>{d=(d||"").trim();const m=d.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)||n
 const HM=h=>(h||"").replace(/^0(\d):/,"$1:").replace(/:00$/,":00");
 const MES3={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,oct:10,nov:11,dic:12};
 const T={
- Misa:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f)return;const no=/^no/i.test(x[1]||"");const bo=/bosque/i.test((x[1]||"")+(x[2]||""));
-  o[f]=[no?"No":"Sí",(x[2]||"").replace(/bosque/i,"").trim().replace(/(\d)-(\d)/,"$1–$2"),bo?"Bosque":"Mirreyes","",x[4]||""];});if(Object.keys(o).length)MISA=o;},
+ Misa:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f)return;const no=/^no/i.test(x[1]||"");let h=x[2]||"";
+  const nu=h.match(/NU\s*([\d:]+\s*-\s*[\d:]+)/i);const bo=/\(bosque\)/i.test(x[1]||"")||(/^\s*bosque/i.test(h)&&!nu);
+  h=nu?nu[1]:h.replace(/bosque/i,"").trim();
+  o[f]=[no?"No":"Sí",h.replace(/\s*-\s*/,"–"),bo?"Bosque":"Mirreyes","",x[4]||"",(x[5]||"").trim()];});if(Object.keys(o).length)MISA=o;},
  Epacta:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f||!x[1])return;const n=x[4]||"";const fa=(n.match(/Fiesta [A-D]\b/)||[""])[0];
   o[f]=[x[1],x[2]||"",x[3]||"",fa,n.replace(/\s*Fiesta [A-D]\b/,"").trim()];});if(Object.keys(o).length)EPACTA=o;},
  Turnos:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(/^\d{4}-/.test(f)&&x[2]&&(!x[1]||/turno/i.test(x[1])))o[f]=x[2];});if(Object.keys(o).length)TURNOS=o;},
