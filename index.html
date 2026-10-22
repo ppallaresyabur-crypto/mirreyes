@@ -880,6 +880,7 @@ const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
 let COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7}};
 let CUMPLES=[["11-01","P. Vicente"],["11-25","P. Rogelio"]];
 // Avisos tab: [desde, horaDesde, hasta, horaHasta, texto, tipo, destacado, tamaño Chico/Normal/Grande]
+let ADMIN=[];
 let AVISOS=[
  ["2026-11-01","","2026-11-01","","Cumpleaños del P. Vicente","Cumpleaños","No","Chico"],
  ["2026-11-25","","2026-11-25","","Cumpleaños del P. Rogelio","Cumpleaños","No","Chico"]];
@@ -903,7 +904,7 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  const m=now.getHours()*60+now.getMinutes();
  reloj.textContent=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
  const h=MISA[ymd(now)];
- fecha.innerHTML=`${DIAS[now.getDay()][0].toUpperCase()+DIAS[now.getDay()].slice(1)}<br>${now.getDate()} de ${MESES[now.getMonth()]}`+(h?`<small>Hoy: ${h[0]==="No"?"no hay Misa":"Misa "+h[1]+" · "+h[2]}</small>`:"");
+ fecha.innerHTML=`${DIAS[now.getDay()][0].toUpperCase()+DIAS[now.getDay()].slice(1)}<br>${now.getDate()} de ${MESES[now.getMonth()]}`;
  // Misa de mañana
  mDia.textContent=`Mañana · ${DIAS[man.getDay()]} ${man.getDate()}`;
  const mm=MISA[ymd(man)],B=misaBox;
@@ -943,6 +944,7 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  // Avisos
  const L=listaAvisos;L.innerHTML="";
  const act=AVISOS.filter(a=>avisoActivo(a,now));
+ {const dn=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][now.getDay()];const it=ADMIN.filter(a=>a[1].includes(dn)).map(a=>a[0].charAt(0).toUpperCase()+a[0].slice(1)+(a[2]?" "+a[2]:""));it.forEach(t=>act.push(["","","","",(/^Limpieza/i.test(t)?"🧹 ":"🧺 ")+t,"Admin","Sí","Normal"]));}
  if((EPACTA[ymd(now)]||[])[6])act.push(["","","","","Hoy: Vela 21:00","Vela","Sí","Normal"]);
  VISITANTES.filter(v=>v[0]<=ymd(now)&&ymd(now)<=(v[4]||v[0])).forEach(v=>act.push(["","","","","Hoy nos visita: "+v[1]+(v[4]&&v[4]!==v[0]&&ymd(now)===v[4]?" (se va hoy)":"")+(v[2]?" · "+v[2]:""),"Visita","Sí","Normal"]));
  if(Q.get("demo")==="grande")act.push(["","","","",EJEMPLO_GRANDE,"","","Grande",true]);
@@ -978,7 +980,8 @@ const T={
  Avisos:r=>{AVISOS=r.filter(x=>x[4]&&!/ver Comidas/i.test(x[4])).map(x=>[F8(x[0]),HM(x[1]),F8(x[2]),HM(x[3]),x[4],x[5]||"",x[6]||"",x[7]||"Normal"]);},
  "Cumpleaños":r=>{const o=[];r.forEach(x=>{const m=(x[0]||"").toLowerCase().match(/^(\d{1,2})-([a-z]{3})/);if(m&&x[1]&&MES3[m[2]])o.push([String(MES3[m[2]]).padStart(2,"0")+"-"+m[1].padStart(2,"0"),x[1]]);});if(o.length)CUMPLES=o;},
  Horario:r=>{const h={lv:[],s:[],d:[]};r.forEach(x=>{if(!x[0]||!x[2]||!/^(Oraci|Misa|Desayuno|Comida|Cena|Medita|Preces)/i.test(x[0]))return;const k=/lunes/i.test(x[1])?"lv":/s[aá]bado/i.test(x[1])?"s":/domingo/i.test(x[1])?"d":null;if(!k)return;
-  h[k].push([x[0].replace(/ semanal/i,""),HM(x[2])+(x[3]?"–"+HM(x[3]):"")]);});if(h.lv.length)HORARIO=h;}
+  h[k].push([x[0].replace(/ semanal/i,""),HM(x[2])+(x[3]?"–"+HM(x[3]):"")]);});if(h.lv.length)HORARIO=h;
+  ADMIN=r.filter(x=>x[0]&&x[1]&&/^(Limpieza|Administraci)/i.test(x[0])).map(x=>[x[0].replace(/^Limpieza de la administración: /i,"Limpieza ").replace(/^Administración: /i,"").replace(/zona de habitaciones/i,"zona interna"),x[1].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""),x[2]?HM(x[2])+(x[3]?"–"+HM(x[3]):""):""]);}
 };
 async function datos(){let ok=0,err=[];await Promise.all(Object.keys(T).map(async n=>{try{T[n](await tab(n));ok++;}catch(e){err.push(n);console.log(e);}}));
  estado.textContent=ok?("Actualizado "+new Date().toLocaleTimeString("es-MX",{hour:"numeric",minute:"2-digit"})+(err.length?" · sin: "+err.join(", "):"")):"Sin conexión a la hoja · datos guardados";
