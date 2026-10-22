@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pantalla Naciones Unidas</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100vw;height:100vh;overflow:hidden}
+body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Noto Sans CJK JP",Arial,sans-serif;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:128px 1fr 1fr 40px;gap:14px;position:relative}
+.t{background:#fff;border-radius:22px;padding:14px 20px;box-shadow:0 3px 10px #0001;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.h{font-size:17px;font-weight:700;color:#6b7785;text-transform:uppercase;letter-spacing:2px;white-space:nowrap}
+.clk{grid-column:span 2;background:#1d2733;color:#fff;flex-direction:row;justify-content:space-between;align-items:center}
+.clk .fe{font-size:26px;line-height:1.3}.clk .fe small{display:block;font-size:17px;color:#9fb0c2;margin-top:4px;white-space:nowrap}
+.clk b{font-size:90px;line-height:1}
+.w{grid-column:span 2;background:linear-gradient(135deg,#4fa3e0,#7cc4f0);color:#fff;flex-direction:row;align-items:center;gap:20px}
+.w .ico{font-size:64px}.w b{font-size:72px}.w .d{font-size:22px;line-height:1.5;white-space:nowrap}
+.mi{grid-column:span 2;grid-row:span 2;color:#fff;gap:8px}
+.mi.si{background:#2e7d32}.mi.no{background:#c62828}.mi.na{background:#607080}
+.mi .h{color:#ffffffcc}
+.mi .y{font-size:72px;font-weight:800;line-height:1.05;margin-top:4px;white-space:nowrap}
+.mi .d{font-size:40px;font-weight:700;white-space:nowrap}.mi .d span{font-weight:400;opacity:.85}
+.ep{margin-top:auto;background:#ffffff22;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.ep.fiesta{background:#ffffff;color:#1d2733;box-shadow:0 0 0 4px #ffd54f}
+.ep .cel{font-size:31px;font-weight:700;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ep .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:21px}
+.dot{display:inline-block;width:24px;height:24px;border-radius:50%;border:2px solid #0003;vertical-align:middle;margin-right:6px}
+.pill{border-radius:999px;padding:3px 12px;font-weight:700;background:#ffffff33;white-space:nowrap}
+.ep.fiesta .pill{background:#eef1f5}
+.pill.fa{background:#ffd54f!important;color:#3d2c00}
+.pill.rk{background:#1d2733!important;color:#ffd54f}
+.ep .nt{font-size:20px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tu .n{font-size:46px;font-weight:700;margin-top:6px;white-space:nowrap}
+.tu .m{font-size:23px;color:#6b7785;margin-top:auto;white-space:nowrap}
+.ds{background:#fff}.ds.on{background:#ffb300}.ds.on .h{color:#6b4b00}
+.ds b{font-size:80px;line-height:1;margin-top:6px}.ds span{font-size:21px}
+.av{grid-column:span 2;gap:8px}
+.aviso{font-size:25px;padding:6px 12px;border-radius:10px;background:#fff3cd;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.aviso.chico{font-size:19px;background:transparent;color:#6b7785;padding:0 12px}
+.vacio{font-size:20px;color:#9aa5b1;margin-top:6px}
+footer{grid-column:span 4;font-size:18px;color:#6b7785;display:flex;align-items:center;justify-content:center;gap:28px;white-space:nowrap}
+footer .on{color:#1d2733;font-weight:700}footer .cu{color:#8a5a00}
+#overlay{display:none;position:absolute;left:18px;right:18px;top:160px;bottom:18px;background:#ffb300;color:#1d2733;border-radius:26px;flex-direction:column;align-items:center;justify-content:center;gap:24px;box-shadow:0 0 0 6px #fff inset,0 10px 30px #0004;padding:30px;z-index:5}
+#overlay .gtxt{font-size:64px;font-weight:800;text-align:center;line-height:1.15}
+#overlay .ejg{font-size:26px;font-weight:700;background:#1d2733;color:#ffd54f;border-radius:10px;padding:4px 18px;letter-spacing:3px}
+@media (max-width:820px){
+html,body{width:100%;height:auto;overflow:auto}
+body{grid-template-columns:1fr;grid-template-rows:none;padding:12px;gap:12px}
+.clk,.w,.mi,.av,footer{grid-column:auto;grid-row:auto}
+.clk b{font-size:60px}.clk .fe{font-size:20px}.clk .fe small{white-space:normal}
+.w .ico{font-size:44px}.w b{font-size:50px}.w .d{font-size:17px;white-space:normal}
+.mi .y{font-size:44px;white-space:normal}.mi .d{font-size:28px;white-space:normal}
+.ep .cel{font-size:22px}.ep .meta{font-size:16px}.ep .nt{white-space:normal;font-size:16px}
+.tu .n{font-size:36px}.ds b{font-size:60px}
+.aviso{font-size:19px;white-space:normal}
+footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px 0}
+#overlay{position:fixed;left:10px;right:10px;top:10px;bottom:auto;min-height:40vh}
+#overlay .gtxt{font-size:36px}
+}
+#estado{position:fixed;right:8px;bottom:4px;font-size:11px;color:#9aa5b1}
+</style></head>
+<body>
+<div class="t clk"><div class="fe" id="fecha"></div><b id="reloj">--:--</b></div>
+<div class="t w"><span class="ico" id="wIco">⛅</span><b id="wT">--°</b><div class="d"><div id="wHoy">Hoy --/--°</div><div id="wMan">Mañana --/--°</div></div></div>
+<div class="t mi" id="misaBox">
+  <div class="h" id="mDia">Mañana</div>
+  <div class="y" id="mHay"></div>
+  <div class="d" id="mDet"></div>
+  <div class="ep" id="mEp"></div>
+</div>
+<div class="t tu"><div class="h">De turno hoy</div><div class="n" id="tHoy">—</div><div class="m" id="tMan"></div></div>
+<div class="t ds" id="dsBox"><div class="h" id="dsH">Desayuno mañana</div><b id="dsN">—</b><span id="dsS">lugares</span></div>
+<div class="t av"><div class="h">Avisos</div><div id="listaAvisos" style="display:flex;flex-direction:column;gap:6px;margin-top:4px"></div></div>
+<footer id="tira"></footer>
+<div id="overlay"></div><div id="estado"></div>
+<script>
+/* ---- Data snapshot from sheet "Pantalla Naciones Unidas" (1M5JRw0oF-7KKrirtElFJocPyhwfvTJoriLYul5BGSD0)
+   and epacta (/workspace/mirreyes/misas-22oct-en-adelante.txt).
+   Later: replace with live CSV via cargarTab() (sheet must be published / shared by link). */
+const SHEET_ID="1M5JRw0oF-7KKrirtElFJocPyhwfvTJoriLYul5BGSD0";
+async function cargarTab(tab){const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}`);return (await r.text()).trim().split("\n").map(l=>l.split('","').map(c=>c.replace(/^"|"$/g,"")));}
+// MISA: fecha -> [hay, hora, oratorio (Mirreyes/Bosque), -, nota]
+// EPACTA: fecha -> [celebración, color, rango, fiesta de casa, notas]
+let MISA={
+"2026-10-21": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-10-22": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-23": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-24": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-10-25": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-10-26": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-27": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-28": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-10-29": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-30": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-31": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-01": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-02": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-03": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-04": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-05": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-06": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-07": [
+"No",
+"",
+"",
+"",
+""
+],
+"2026-11-08": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-09": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-10": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-11": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-12": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-13": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-14": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-15": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-16": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-17": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-18": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-19": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-20": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-21": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-22": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-23": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-24": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-25": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-26": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-27": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-28": [
+"Sí",
+"7:30–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-29": [
+"Sí",
+"9:00–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-30": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+]
+};
+let EPACTA={
+"2026-10-22": [
+"Aniv. de la dedicación de la Catedral Gdl",
+"blanco",
+"Fiesta (en GDL)",
+"Fiesta C",
+"[San Juan Pablo II, papa]"
+],
+"2026-10-23": [
+"San Juan de Capistrano, presbítero",
+"blanco",
+"Memoria libre",
+"",
+""
+],
+"2026-10-24": [
+"San Rafael Guízar y Valencia, obispo. Patrono de los obispos de México",
+"blanco",
+"Fiesta",
+"Fiesta C",
+"[Fiesta en familia, antes S. Rafael]"
+],
+"2026-10-25": [
+"XXX Domingo del Tiempo Ordinario",
+"verde",
+"",
+"Fiesta C",
+"con prefacio propio"
+],
+"2026-10-26": [
+"Misa votiva de San Josemaría",
+"blanco",
+"",
+"",
+""
+],
+"2026-10-27": [
+"Misa votiva NSJ Sumo y Eterno Sacerdote",
+"blanco",
+"",
+"Fiesta B",
+"Cumpleaños del Padre (1944) ExSi"
+],
+"2026-10-28": [
+"Santos Simón y Judas, apóstoles",
+"rojo",
+"Fiesta",
+"Fiesta C",
+"(mención)"
+],
+"2026-10-29": [
+"Misa por la santificación del trabajo humano",
+"verde",
+"",
+"",
+""
+],
+"2026-10-30": [
+"Votiva de la Santa Cruz",
+"rojo",
+"",
+"",
+"con su Prefacio"
+],
+"2026-10-31": [
+"Santa María en sábado",
+"blanco",
+"",
+"",
+""
+],
+"2026-11-01": [
+"Solemnidad de Todos los Santos",
+"blanco",
+"Solemnidad",
+"Fiesta B",
+"ExSi"
+],
+"2026-11-02": [
+"Conmemoración de todos los Fieles Difuntos",
+"morado",
+"",
+"",
+"Responso con tres oraciones"
+],
+"2026-11-03": [
+"San Martín de Porres, religioso",
+"blanco",
+"Memoria obligatoria",
+"",
+"Misa por los fieles de la Obra fallecidos desde el 2-XI del año anterior"
+],
+"2026-11-04": [
+"San Carlos Borromeo, obispo",
+"blanco",
+"Memoria obligatoria",
+"",
+"Misa por los Difuntos de la Región"
+],
+"2026-11-05": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"Inicia el 1er novenario por los fieles de la Obra fallecidos Vela"
+],
+"2026-11-06": [
+"Votiva del Sagrado Corazón de Jesús",
+"blanco",
+"",
+"",
+"con su Prefacio · 2° día del 1er Novenario Limpieza sagrario"
+],
+"2026-11-07": [
+"Votiva de San Severino, mártir",
+"rojo",
+"",
+"Fiesta D",
+"3° día del 1er Novenario"
+],
+"2026-11-08": [
+"XXXII Domingo del Tiempo Ordinario",
+"verde",
+"",
+"Fiesta C",
+"4° día del 1er Novenario"
+],
+"2026-11-09": [
+"La Dedicación de la Basílica de Letrán",
+"blanco",
+"Fiesta",
+"Fiesta C",
+"5° día del 1er Novenario"
+],
+"2026-11-10": [
+"San León el Magno, papa y doctor de la Iglesia",
+"blanco",
+"Memoria obligatoria",
+"",
+"6° día del 1er Novenario"
+],
+"2026-11-11": [
+"San Martín de Tours, obispo",
+"blanco",
+"Memoria obligatoria",
+"",
+"7° día del 1er Novenario"
+],
+"2026-11-12": [
+"San Josafat, obispo y mártir",
+"rojo",
+"Memoria obligatoria",
+"",
+"8° día del 1er Novenario"
+],
+"2026-11-13": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"9° día del 1er Novenario"
+],
+"2026-11-14": [
+"Votiva de la Virgen de Guadalupe en tiempo ordinario I",
+"blanco",
+"",
+"",
+"2° novenario por los fieles de la Obra fallecidos. Ip (Todos los Ss. Carmelitas)"
+],
+"2026-11-15": [
+"XXXIII Domingo del Tiempo Ordinario",
+"verde",
+"",
+"Fiesta C",
+"2° día del 2° Novenario Quicumque"
+],
+"2026-11-16": [
+"Misa por la patria",
+"verde",
+"",
+"Fiesta C (nacional)",
+"3° día del 2° Novenario"
+],
+"2026-11-17": [
+"Santa Isabel de Hungría, religiosa",
+"blanco",
+"Memoria obligatoria",
+"",
+"4° día del 2° Novenario"
+],
+"2026-11-18": [
+"La Dedicación de las Basílicas de los Santos Pedro y Pablo, apóstoles",
+"blanco",
+"Memoria libre",
+"",
+"5° día del 2° Novenario"
+],
+"2026-11-19": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"6° día del 2° Novenario"
+],
+"2026-11-20": [
+"Beatos Anacleto González Flores y compañeros, mártires",
+"rojo",
+"Memoria obligatoria (en GDL)",
+"",
+"7° día del 2° Novenario"
+],
+"2026-11-21": [
+"La presentación de la Sma. Virgen María",
+"blanco",
+"Memoria obligatoria",
+"Fiesta C",
+"8° día del 2° Novenario"
+],
+"2026-11-22": [
+"Nuestro Señor Jesucristo, Rey del Universo",
+"blanco",
+"Solemnidad",
+"Fiesta A",
+"9° día del 2° Novenario ExSo. (Consagración)"
+],
+"2026-11-23": [
+"Beato Miguel Agustín Pro, presbítero y mártir",
+"rojo",
+"Memoria libre",
+"",
+"Misa por los cp, ae y bienhechores fallecidos"
+],
+"2026-11-24": [
+"Santos Andrés Dung-Lac, presbítero, y compañeros, mártires",
+"rojo",
+"Memoria obligatoria",
+"",
+"Misa por los padres fallecidos de todos los fieles de la Obra"
+],
+"2026-11-25": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"En dl: Misa por último Romano Pontífice fallecido"
+],
+"2026-11-26": [
+"Misa votiva de San Josemaría",
+"blanco",
+"",
+"",
+""
+],
+"2026-11-27": [
+"Nstra. Sra. De la Medalla Milagrosa",
+"blanco",
+"",
+"Fiesta D",
+"Aniv. del fallecimiento del Abuelo"
+],
+"2026-11-28": [
+"Aniv. erección de la Obra en Prelatura Personal 1982",
+"blanco",
+"",
+"Fiesta A",
+"ExSo. (Te Deum)"
+],
+"2026-11-29": [
+"I Domingo del Tiempo de Adviento",
+"morado",
+"",
+"Fiesta C",
+"INICIA EL TIEMPO DE ADVIENTO"
+],
+"2026-11-30": [
+"San Andrés apóstol",
+"rojo",
+"",
+"Fiesta C",
+"1° día Novena a la Inmaculada"
+],
+"2026-12-01": [
+"Martes I de Adviento",
+"morado",
+"",
+"",
+"2° día Novena a la Inmaculada"
+],
+"2026-12-02": [
+"Miércoles I de Adviento",
+"morado",
+"",
+"",
+"3° día Novena a la Inmaculada"
+],
+"2026-12-03": [
+"San Francisco Javier, presbítero",
+"blanco",
+"Memoria obligatoria",
+"",
+"4° día Novena a la Inmaculada Vela"
+],
+"2026-12-04": [
+"Viernes I de Adviento",
+"morado",
+"",
+"",
+"5° día Novena a la Inmaculada Limpieza sagrario"
+],
+"2026-12-05": [
+"Sábado I de Adviento",
+"morado",
+"",
+"",
+"6° día Novena a la Inmaculada"
+],
+"2026-12-06": [
+"II Domingo de Adviento",
+"morado",
+"",
+"Fiesta C",
+"7° día Novena a la Inmaculada"
+],
+"2026-12-07": [
+"Lunes II de Adviento",
+"morado",
+"",
+"Fiesta C",
+"8° día Novena a la Inmaculada [San Nicolás de Bari]"
+],
+"2026-12-08": [
+"Inmaculada Concepción de la Sma. Virgen María",
+"azul o blanco",
+"Solemnidad",
+"Fiesta A",
+"9° día Novena a la Inmaculada ExSo"
+],
+"2026-12-09": [
+"San Juan Diego Cuauhtlatoatzin",
+"blanco",
+"Memoria obligatoria",
+"",
+""
+],
+"2026-12-10": [
+"Nuestra Señora de Loreto",
+"blanco",
+"Memoria libre",
+"Fiesta D",
+""
+],
+"2026-12-11": [
+"Viernes II de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-12": [
+"Nuestra Señora de Guadalupe",
+"blanco",
+"Solemnidad",
+"Fiesta A",
+""
+],
+"2026-12-13": [
+"III Domingo de Adviento (Gaudete)",
+"rosa o morado",
+"",
+"Fiesta C",
+""
+],
+"2026-12-14": [
+"Lunes III de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-15": [
+"Martes III de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-16": [
+"Miércoles III de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-17": [
+"Feria de Adviento (17 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-18": [
+"Feria de Adviento (18 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-19": [
+"Feria de Adviento (19 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-20": [
+"IV Domingo de Adviento",
+"morado",
+"",
+"Fiesta C",
+"Quicumque"
+],
+"2026-12-21": [
+"Feria de Adviento (21 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-22": [
+"Feria de Adviento (22 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-23": [
+"Feria de Adviento (23 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-24": [
+"Feria de Adviento (24 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-25": [
+"La Natividad del Señor",
+"blanco",
+"Solemnidad",
+"Fiesta A",
+"ExSo. Adoración del Niño INICIA EL TIEMPO DE NAVIDAD"
+],
+"2026-12-26": [
+"San Esteban, protomártir",
+"rojo",
+"Fiesta",
+"Fiesta D",
+"Adoración del Niño"
+],
+"2026-12-27": [
+"Fiesta de la Sagrada Familia",
+"blanco",
+"Fiesta",
+"Fiesta A",
+"ExSo. (Consagración) Adoración del Niño · [San Juan, apóstol]"
+],
+"2026-12-28": [
+"Santos inocentes, mártires",
+"blanco",
+"Fiesta",
+"Fiesta B",
+"Ip, ExSi. Adoración del Niño"
+],
+"2026-12-29": [
+"V día de la Octava de Navidad",
+"blanco",
+"",
+"Fiesta D",
+""
+],
+"2026-12-30": [
+"VI día de la Octava de Navidad",
+"blanco",
+"",
+"Fiesta D",
+""
+],
+"2026-12-31": [
+"VII día de la Octava de Navidad",
+"blanco",
+"",
+"Fiesta D",
+"Te Deum"
+]
+};
+
+const COLORES={blanco:"#f4efe6",verde:"#43a047",rojo:"#d64541",morado:"#8e5bb5",rosa:"#e58fb2",azul:"#4a7fd0"};
+let TURNOS={"2026-10-21":"Cheve","2026-10-22":"Pedro","2026-10-23":"P. Bernardo","2026-10-24":"Tito","2026-10-25":"Arthur","2026-10-26":"Migue","2026-10-27":"P. Vicente","2026-10-28":"George","2026-10-29":"P. Quico","2026-10-30":"Guy","2026-10-31":"Pedro","2026-11-01":"P. Bernardo","2026-11-02":"Tito","2026-11-03":"Arthur","2026-11-04":"Migue"};
+const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
+// Comidas tab (written by the routines): fecha -> {desayuno, cena}
+let COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7}};
+let CUMPLES=[["11-01","P. Vicente"],["11-25","P. Rogelio"]];
+// Avisos tab: [desde, horaDesde, hasta, horaHasta, texto, tipo, destacado, tamaño Chico/Normal/Grande]
+let AVISOS=[
+ ["2026-11-01","","2026-11-01","","Cumpleaños del P. Vicente","Cumpleaños","No","Chico"],
+ ["2026-11-25","","2026-11-25","","Cumpleaños del P. Rogelio","Cumpleaños","No","Chico"]];
+// Visitantes tab: [fecha(desde), nombre, hora, nota, hasta] -> Normal notice on its date
+let VISITANTES=[["2026-10-22","Txema Díaz-Donorroso","","","2026-10-24"]];
+const EJEMPLO_GRANDE="Hoy: comida con invitados · 14:30";
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const mins=s=>{const [h,m]=s.split(":").map(Number);return h*60+m;};
+const Q=new URLSearchParams(location.search);
+function ahora(){const n=new Date();const f=Q.get("fecha");if(f){const [y,mo,d]=f.split("-").map(Number);n.setFullYear(y,mo-1,d);}
+ const h=Q.get("hora");if(h){const [a,b]=h.split(":").map(Number);n.setHours(a,b);}return n;}
+function avisoActivo(a,now){const hoy=ymd(now),m=now.getHours()*60+now.getMinutes();
+ if(hoy<a[0]||(a[2]&&hoy>a[2]))return false;
+ if(a[5]==="Fin de semana"&&![0,6].includes(now.getDay()))return false;
+ if(a[1]&&m<mins(a[1]))return false; if(a[3]&&m>=mins(a[3]))return false; return true;}
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+1);
+ const m=now.getHours()*60+now.getMinutes();
+ reloj.textContent=now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");
+ const h=MISA[ymd(now)];
+ fecha.innerHTML=`${DIAS[now.getDay()][0].toUpperCase()+DIAS[now.getDay()].slice(1)}<br>${now.getDate()} de ${MESES[now.getMonth()]}`+(h?`<small>Hoy: ${h[0]==="No"?"no hay Misa":"Misa "+h[1]+" · "+h[2]}</small>`:"");
+ // Misa de mañana
+ mDia.textContent=`Mañana · ${DIAS[man.getDay()]} ${man.getDate()}`;
+ const mm=MISA[ymd(man)],B=misaBox;
+ if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";mDet.textContent="";}
+ else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";mDet.innerHTML="";}
+ else{B.className="t mi si";mHay.textContent="✓ Sí hay Misa";mDet.innerHTML=`${mm[1]} <span>·</span> ${mm[2]}`;}
+ const ep=EPACTA[ymd(man)],E=mEp;
+ if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
+  E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
+   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(ep[4]?`<div class="nt">${esc(ep[4])}</div>`:"");}
+ else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
+ // Turno
+ tHoy.textContent=NOMBRE(TURNOS[ymd(now)]||"—");const tm=TURNOS[ymd(man)];tMan.textContent=tm?"Mañana: "+NOMBRE(tm):"";
+ // Lugares: cena de hoy (sáb/dom en la comida) o desayuno de mañana (desde 20:00)
+ const fin=[0,6].includes(now.getDay())&&m>=mins("14:15")&&m<mins("16:00");
+ const ds=dsBox;if(fin){dsH.textContent="Cena hoy";const c=(COMIDAS[ymd(now)]||{}).cena;dsN.textContent=c??"—";ds.className="t ds on";}
+ else{dsH.textContent="Desayuno mañana";const c=(COMIDAS[ymd(man)]||{}).desayuno;dsN.textContent=c??"—";ds.className="t ds"+(m>=mins("20:00")?" on":"");}
+ // Tira de horario + próximo cumpleaños
+ const sab=now.getDay()===6,dom=now.getDay()===0;
+ let F=HORARIO&&HORARIO[dom?"d":sab?"s":"lv"];if(F&&F.length)F=F.map(x=>[x[0],x[1]]);else F=dom?[["Meditación","8:30"],["Misa","9:00"],["Desayuno","9:45"]]:sab?[["Oración","7:30"],["Misa","8:00"],["Desayuno","8:45"]]:[["Oración","7:15"],["Misa","7:45"],["Desayuno","8:30"]];
+ if(!(HORARIO&&HORARIO[dom?"d":sab?"s":"lv"]&&HORARIO[dom?"d":sab?"s":"lv"].length))F.push(["Comida","14:30"],["Cena","20:20–20:50"]);
+ const ni=F.findIndex(x=>mins(x[1].split("–")[0])>m);
+ const md=ymd(now).slice(5),cu=CUMPLES.map(c=>[c[0]>=md?c[0]:"x"+c[0],c]).sort()[0];
+ tira.innerHTML=F.map((x,i)=>`<span class="${i===ni?"on":""}">${x[0]} ${x[1]}</span>`).join("")+(cu?`<span class="cu">🎂 ${cu[1][1]} · ${+cu[1][0].slice(3)} ${MESES[+cu[1][0].slice(0,2)-1].slice(0,3)}</span>`:"");
+ // Avisos
+ const L=listaAvisos;L.innerHTML="";
+ const act=AVISOS.filter(a=>avisoActivo(a,now));
+ VISITANTES.filter(v=>v[0]<=ymd(now)&&ymd(now)<=(v[4]||v[0])).forEach(v=>act.push(["","","","","Hoy nos visita: "+v[1]+(v[4]&&v[4]!==v[0]&&ymd(now)===v[4]?" (se va hoy)":"")+(v[2]?" · "+v[2]:""),"Visita","Sí","Normal"]));
+ if(Q.get("demo")==="grande")act.push(["","","","",EJEMPLO_GRANDE,"","","Grande",true]);
+ const vis=act.filter(a=>(a[7]||"Normal")!=="Grande").sort((x,y)=>(x[7]==="Chico")-(y[7]==="Chico"));
+ vis.forEach(a=>{const d=document.createElement("div");d.className="aviso"+(a[7]==="Chico"?" chico":"");d.textContent=a[4];L.appendChild(d);});
+ if(!vis.length)L.innerHTML='<div class="vacio">Sin avisos por hoy</div>';
+ const g=act.find(a=>a[7]==="Grande"),O=overlay;
+ if(g){O.style.display="flex";O.innerHTML=(g[8]?'<div class="ejg">EJEMPLO</div>':'')+`<div class="gtxt">${esc(g[4])}</div>`;}else O.style.display="none";}
+
+/* ---- Live data: read the sheet tabs as CSV (sheet must be viewable by link). Keeps last good data on failure. */
+let HORARIO=null;
+function csv(t){const R=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];
+ if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}
+ else if(ch=='"')q=true;else if(ch==","){row.push(c);c="";}else if(ch=="\n"){row.push(c);R.push(row);row=[];c="";}else if(ch!="\r")c+=ch;}
+ if(c||row.length){row.push(c);R.push(row);}return R;}
+async function tab(n){const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(n)}&t=${Date.now()}`,{cache:"no-store"});
+ if(!r.ok)throw new Error(n+" "+r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error(n+" no CSV");return csv(t).slice(1).map(r=>r.map(x=>x.trim()));}
+const F8=d=>{d=(d||"").trim();const m=d.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)||null;if(m)return m[1]+"-"+m[2].padStart(2,"0")+"-"+m[3].padStart(2,"0");
+ const k=d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(k)return k[3]+"-"+k[1].padStart(2,"0")+"-"+k[2].padStart(2,"0");return d;};
+const HM=h=>(h||"").replace(/^0(\d):/,"$1:").replace(/:00$/,":00");
+const MES3={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,oct:10,nov:11,dic:12};
+const T={
+ Misa:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f)return;const no=/^no/i.test(x[1]||"");const bo=/bosque/i.test((x[1]||"")+(x[2]||""));
+  o[f]=[no?"No":"Sí",(x[2]||"").replace(/bosque/i,"").trim().replace(/(\d)-(\d)/,"$1–$2"),bo?"Bosque":"Mirreyes","",x[4]||""];});if(Object.keys(o).length)MISA=o;},
+ Epacta:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!f||!x[1])return;const n=x[4]||"";const fa=(n.match(/Fiesta [A-D]\b/)||[""])[0];
+  o[f]=[x[1],x[2]||"",x[3]||"",fa,n.replace(/\s*Fiesta [A-D]\b/,"").trim()];});if(Object.keys(o).length)EPACTA=o;},
+ Turnos:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(/^\d{4}-/.test(f)&&x[2]&&(!x[1]||/turno/i.test(x[1])))o[f]=x[2];});if(Object.keys(o).length)TURNOS=o;},
+ Comidas:r=>{const o={};r.forEach(x=>{const f=F8(x[0]);if(!/^\d{4}-/.test(f))return;const n=v=>v===""||isNaN(+v)?undefined:+v;o[f]={desayuno:n(x[1]),comida:n(x[2]),cena:n(x[3])};});COMIDAS=o;},
+ Visitantes:r=>{VISITANTES=r.filter(x=>/^\d{4}-/.test(F8(x[0]))&&x[1]).map(x=>[F8(x[0]),x[1],x[2]||"","",F8(x[4]||"")]);},
+ Avisos:r=>{AVISOS=r.filter(x=>x[4]&&!/ver Comidas/i.test(x[4])).map(x=>[F8(x[0]),HM(x[1]),F8(x[2]),HM(x[3]),x[4],x[5]||"",x[6]||"",x[7]||"Normal"]);},
+ "Cumpleaños":r=>{const o=[];r.forEach(x=>{const m=(x[0]||"").toLowerCase().match(/^(\d{1,2})-([a-z]{3})/);if(m&&x[1]&&MES3[m[2]])o.push([String(MES3[m[2]]).padStart(2,"0")+"-"+m[1].padStart(2,"0"),x[1]]);});if(o.length)CUMPLES=o;},
+ Horario:r=>{const h={lv:[],s:[],d:[]};r.forEach(x=>{if(!x[0]||!x[2]||!/^(Oraci|Misa|Desayuno|Comida|Cena|Medita)/i.test(x[0]))return;const k=/lunes/i.test(x[1])?"lv":/s[aá]bado/i.test(x[1])?"s":/domingo/i.test(x[1])?"d":null;if(!k)return;
+  h[k].push([x[0].replace(/ semanal/i,""),HM(x[2])+(x[3]?"–"+HM(x[3]):"")]);});if(h.lv.length)HORARIO=h;}
+};
+async function datos(){let ok=0,err=[];await Promise.all(Object.keys(T).map(async n=>{try{T[n](await tab(n));ok++;}catch(e){err.push(n);console.log(e);}}));
+ estado.textContent=ok?("Actualizado "+new Date().toLocaleTimeString("es-MX",{hour:"numeric",minute:"2-digit"})+(err.length?" · sin: "+err.join(", "):"")):"Sin conexión a la hoja · datos guardados";
+ try{render();}catch(e){console.log(e)}}
+/* ---- Weather: Open-Meteo, Guadalajara */
+const WMO=c=>c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?"🌧️":c<=77?"🌨️":c<=82?"🌦️":"⛈️";
+async function clima(){try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=20.67&longitude=-103.35&current=temperature_2m,weather_code&daily=temperature_2m_min,temperature_2m_max,precipitation_probability_max&timezone=America%2FMexico_City&forecast_days=2");
+ const j=await r.json(),d=j.daily;wIco.textContent=WMO(j.current.weather_code);wT.textContent=Math.round(j.current.temperature_2m)+"°";
+ wHoy.textContent=`Hoy ${Math.round(d.temperature_2m_min[0])}/${Math.round(d.temperature_2m_max[0])}° · 💧${d.precipitation_probability_max[0]}%`;
+ wMan.textContent=`Mañana ${Math.round(d.temperature_2m_min[1])}/${Math.round(d.temperature_2m_max[1])}° · 💧${d.precipitation_probability_max[1]}%`;}catch(e){console.log(e)}}
+render();datos();setInterval(datos,5*60*1000);setInterval(render,15000);clima();setInterval(clima,30*60*1000);
+</script>
+</body></html>
