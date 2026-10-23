@@ -1,0 +1,875 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><title>Recordatorio · mañana</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:390px;height:490px;overflow:hidden}
+body{background:#e9edf2;color:#1d2733;font-family:-apple-system,"DejaVu Sans","Noto Sans","Noto Sans CJK JP",Arial,sans-serif;padding:10px;display:flex;flex-direction:column;gap:8px}
+.t{background:#fff;border-radius:16px;padding:9px 12px;box-shadow:0 2px 6px #0001}
+.h{font-size:11px;font-weight:700;color:#6b7785;text-transform:uppercase;letter-spacing:1px}
+.top{background:#1d2733;color:#fff;font-size:22px;font-weight:700;padding:8px 14px}
+.mi{color:#fff;display:flex;flex-direction:column;gap:7px;padding:11px 12px;flex:1}
+.mi.si{background:#2e7d32}.mi.no{background:#c62828}.mi.na{background:#607080}
+.mi .y{font-size:19.5px;white-space:nowrap;font-weight:800;line-height:1.1}
+.ep{background:#ffffff22;border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center}
+.ep.fiesta{background:#fff;color:#1d2733;box-shadow:0 0 0 3px #ffd54f}
+.ep .cel{font-size:24px;font-weight:700;line-height:1.2}
+.ep .meta{display:flex;flex-wrap:wrap;gap:5px;font-size:14px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.5px solid #0003;vertical-align:-1px;margin-right:4px}
+.pill{border-radius:999px;padding:2px 9px;font-weight:700;background:#ffffff33}
+.ep.fiesta .pill{background:#eef1f5}.pill.fa{background:#ffd54f!important;color:#3d2c00}.pill.rk{background:#1d2733!important;color:#ffd54f}
+.ep .nt{font-size:15px;opacity:.75}
+.row{display:flex;gap:6px}.row .t{flex:1;padding:8px 10px;min-width:0}
+.v{font-size:19px;font-weight:700;margin-top:3px;line-height:1.15;white-space:nowrap}.v small{display:block;font-size:12px;font-weight:400;opacity:.75}
+.w{background:linear-gradient(135deg,#4fa3e0,#7cc4f0);color:#fff}.w .h{color:#ffffffd8}
+.av{font-size:16px;background:#fff3cd;padding:8px 12px}
+.av b{font-size:11px;color:#8a5a00;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
+</style></head><body>
+<div class="t top" id="fecha"></div>
+<div class="t mi" id="misaBox"><div class="y" id="mHay"></div><div class="ep" id="mEp"></div></div>
+<div class="row"><div class="t"><div class="h">Turno</div><div class="v" id="tMan">—</div></div>
+<div class="t"><div class="h">Desayuno</div><div class="v"><span id="cD">—</span> lugares<small id="cDn"></small></div></div>
+<div class="t w"><div class="h">Clima</div><div class="v"><span id="wT">--/--°</span><small id="wLl">--% lluvia</small></div></div></div>
+<div class="t av" id="listaAvisos"></div>
+<script>
+const MISA={
+"2026-10-21": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-10-22": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-23": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-24": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-10-25": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-10-26": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-27": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-28": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-10-29": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-30": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-10-31": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-01": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-02": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-03": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-04": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-05": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-06": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-07": [
+"No",
+"",
+"",
+"",
+""
+],
+"2026-11-08": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-09": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-10": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-11": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-12": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-13": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-14": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-15": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-16": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-17": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-18": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-19": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-20": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-21": [
+"Sí",
+"8:00–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-22": [
+"Sí",
+"8:30–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-23": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-24": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-25": [
+"Sí",
+"7:15–8:15",
+"Bosque",
+"",
+""
+],
+"2026-11-26": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-27": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+],
+"2026-11-28": [
+"Sí",
+"7:30–8:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-29": [
+"Sí",
+"9:00–9:30",
+"Mirreyes",
+"",
+""
+],
+"2026-11-30": [
+"Sí",
+"7:45–8:15",
+"Mirreyes",
+"",
+""
+]
+};
+const EPACTA={
+"2026-10-22": [
+"Aniv. de la dedicación de la Catedral Gdl",
+"blanco",
+"Fiesta (en GDL)",
+"Fiesta C",
+"[San Juan Pablo II, papa]"
+],
+"2026-10-23": [
+"San Juan de Capistrano, presbítero",
+"blanco",
+"Memoria libre",
+"",
+""
+],
+"2026-10-24": [
+"San Rafael Guízar y Valencia, obispo. Patrono de los obispos de México",
+"blanco",
+"Fiesta",
+"Fiesta C",
+"[Fiesta en familia, antes S. Rafael]"
+],
+"2026-10-25": [
+"XXX Domingo del Tiempo Ordinario",
+"verde",
+"",
+"Fiesta C",
+"con prefacio propio"
+],
+"2026-10-26": [
+"Misa votiva de San Josemaría",
+"blanco",
+"",
+"",
+""
+],
+"2026-10-27": [
+"Misa votiva NSJ Sumo y Eterno Sacerdote",
+"blanco",
+"",
+"Fiesta B",
+"Cumpleaños del Padre (1944) ExSi"
+],
+"2026-10-28": [
+"Santos Simón y Judas, apóstoles",
+"rojo",
+"Fiesta",
+"Fiesta C",
+"(mención)"
+],
+"2026-10-29": [
+"Misa por la santificación del trabajo humano",
+"verde",
+"",
+"",
+""
+],
+"2026-10-30": [
+"Votiva de la Santa Cruz",
+"rojo",
+"",
+"",
+"con su Prefacio"
+],
+"2026-10-31": [
+"Santa María en sábado",
+"blanco",
+"",
+"",
+""
+],
+"2026-11-01": [
+"Solemnidad de Todos los Santos",
+"blanco",
+"Solemnidad",
+"Fiesta B",
+"ExSi"
+],
+"2026-11-02": [
+"Conmemoración de todos los Fieles Difuntos",
+"morado",
+"",
+"",
+"Responso con tres oraciones"
+],
+"2026-11-03": [
+"San Martín de Porres, religioso",
+"blanco",
+"Memoria obligatoria",
+"",
+"Misa por los fieles de la Obra fallecidos desde el 2-XI del año anterior"
+],
+"2026-11-04": [
+"San Carlos Borromeo, obispo",
+"blanco",
+"Memoria obligatoria",
+"",
+"Misa por los Difuntos de la Región"
+],
+"2026-11-05": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"Inicia el 1er novenario por los fieles de la Obra fallecidos Vela"
+],
+"2026-11-06": [
+"Votiva del Sagrado Corazón de Jesús",
+"blanco",
+"",
+"",
+"con su Prefacio · 2° día del 1er Novenario Limpieza sagrario"
+],
+"2026-11-07": [
+"Votiva de San Severino, mártir",
+"rojo",
+"",
+"Fiesta D",
+"3° día del 1er Novenario"
+],
+"2026-11-08": [
+"XXXII Domingo del Tiempo Ordinario",
+"verde",
+"",
+"Fiesta C",
+"4° día del 1er Novenario"
+],
+"2026-11-09": [
+"La Dedicación de la Basílica de Letrán",
+"blanco",
+"Fiesta",
+"Fiesta C",
+"5° día del 1er Novenario"
+],
+"2026-11-10": [
+"San León el Magno, papa y doctor de la Iglesia",
+"blanco",
+"Memoria obligatoria",
+"",
+"6° día del 1er Novenario"
+],
+"2026-11-11": [
+"San Martín de Tours, obispo",
+"blanco",
+"Memoria obligatoria",
+"",
+"7° día del 1er Novenario"
+],
+"2026-11-12": [
+"San Josafat, obispo y mártir",
+"rojo",
+"Memoria obligatoria",
+"",
+"8° día del 1er Novenario"
+],
+"2026-11-13": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"9° día del 1er Novenario"
+],
+"2026-11-14": [
+"Votiva de la Virgen de Guadalupe en tiempo ordinario I",
+"blanco",
+"",
+"",
+"2° novenario por los fieles de la Obra fallecidos. Ip (Todos los Ss. Carmelitas)"
+],
+"2026-11-15": [
+"XXXIII Domingo del Tiempo Ordinario",
+"verde",
+"",
+"Fiesta C",
+"2° día del 2° Novenario Quicumque"
+],
+"2026-11-16": [
+"Misa por la patria",
+"verde",
+"",
+"Fiesta C (nacional)",
+"3° día del 2° Novenario"
+],
+"2026-11-17": [
+"Santa Isabel de Hungría, religiosa",
+"blanco",
+"Memoria obligatoria",
+"",
+"4° día del 2° Novenario"
+],
+"2026-11-18": [
+"La Dedicación de las Basílicas de los Santos Pedro y Pablo, apóstoles",
+"blanco",
+"Memoria libre",
+"",
+"5° día del 2° Novenario"
+],
+"2026-11-19": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"6° día del 2° Novenario"
+],
+"2026-11-20": [
+"Beatos Anacleto González Flores y compañeros, mártires",
+"rojo",
+"Memoria obligatoria (en GDL)",
+"",
+"7° día del 2° Novenario"
+],
+"2026-11-21": [
+"La presentación de la Sma. Virgen María",
+"blanco",
+"Memoria obligatoria",
+"Fiesta C",
+"8° día del 2° Novenario"
+],
+"2026-11-22": [
+"Nuestro Señor Jesucristo, Rey del Universo",
+"blanco",
+"Solemnidad",
+"Fiesta A",
+"9° día del 2° Novenario ExSo. (Consagración)"
+],
+"2026-11-23": [
+"Beato Miguel Agustín Pro, presbítero y mártir",
+"rojo",
+"Memoria libre",
+"",
+"Misa por los cp, ae y bienhechores fallecidos"
+],
+"2026-11-24": [
+"Santos Andrés Dung-Lac, presbítero, y compañeros, mártires",
+"rojo",
+"Memoria obligatoria",
+"",
+"Misa por los padres fallecidos de todos los fieles de la Obra"
+],
+"2026-11-25": [
+"Misa por los difuntos",
+"morado",
+"",
+"",
+"En dl: Misa por último Romano Pontífice fallecido"
+],
+"2026-11-26": [
+"Misa votiva de San Josemaría",
+"blanco",
+"",
+"",
+""
+],
+"2026-11-27": [
+"Nstra. Sra. De la Medalla Milagrosa",
+"blanco",
+"",
+"Fiesta D",
+"Aniv. del fallecimiento del Abuelo"
+],
+"2026-11-28": [
+"Aniv. erección de la Obra en Prelatura Personal 1982",
+"blanco",
+"",
+"Fiesta A",
+"ExSo. (Te Deum)"
+],
+"2026-11-29": [
+"I Domingo del Tiempo de Adviento",
+"morado",
+"",
+"Fiesta C",
+"INICIA EL TIEMPO DE ADVIENTO"
+],
+"2026-11-30": [
+"San Andrés apóstol",
+"rojo",
+"",
+"Fiesta C",
+"1° día Novena a la Inmaculada"
+],
+"2026-12-01": [
+"Martes I de Adviento",
+"morado",
+"",
+"",
+"2° día Novena a la Inmaculada"
+],
+"2026-12-02": [
+"Miércoles I de Adviento",
+"morado",
+"",
+"",
+"3° día Novena a la Inmaculada"
+],
+"2026-12-03": [
+"San Francisco Javier, presbítero",
+"blanco",
+"Memoria obligatoria",
+"",
+"4° día Novena a la Inmaculada Vela"
+],
+"2026-12-04": [
+"Viernes I de Adviento",
+"morado",
+"",
+"",
+"5° día Novena a la Inmaculada Limpieza sagrario"
+],
+"2026-12-05": [
+"Sábado I de Adviento",
+"morado",
+"",
+"",
+"6° día Novena a la Inmaculada"
+],
+"2026-12-06": [
+"II Domingo de Adviento",
+"morado",
+"",
+"Fiesta C",
+"7° día Novena a la Inmaculada"
+],
+"2026-12-07": [
+"Lunes II de Adviento",
+"morado",
+"",
+"Fiesta C",
+"8° día Novena a la Inmaculada [San Nicolás de Bari]"
+],
+"2026-12-08": [
+"Inmaculada Concepción de la Sma. Virgen María",
+"azul o blanco",
+"Solemnidad",
+"Fiesta A",
+"9° día Novena a la Inmaculada ExSo"
+],
+"2026-12-09": [
+"San Juan Diego Cuauhtlatoatzin",
+"blanco",
+"Memoria obligatoria",
+"",
+""
+],
+"2026-12-10": [
+"Nuestra Señora de Loreto",
+"blanco",
+"Memoria libre",
+"Fiesta D",
+""
+],
+"2026-12-11": [
+"Viernes II de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-12": [
+"Nuestra Señora de Guadalupe",
+"blanco",
+"Solemnidad",
+"Fiesta A",
+""
+],
+"2026-12-13": [
+"III Domingo de Adviento (Gaudete)",
+"rosa o morado",
+"",
+"Fiesta C",
+""
+],
+"2026-12-14": [
+"Lunes III de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-15": [
+"Martes III de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-16": [
+"Miércoles III de Adviento",
+"morado",
+"",
+"",
+""
+],
+"2026-12-17": [
+"Feria de Adviento (17 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-18": [
+"Feria de Adviento (18 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-19": [
+"Feria de Adviento (19 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-20": [
+"IV Domingo de Adviento",
+"morado",
+"",
+"Fiesta C",
+"Quicumque"
+],
+"2026-12-21": [
+"Feria de Adviento (21 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-22": [
+"Feria de Adviento (22 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-23": [
+"Feria de Adviento (23 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-24": [
+"Feria de Adviento (24 de diciembre)",
+"morado",
+"",
+"",
+""
+],
+"2026-12-25": [
+"La Natividad del Señor",
+"blanco",
+"Solemnidad",
+"Fiesta A",
+"ExSo. Adoración del Niño INICIA EL TIEMPO DE NAVIDAD"
+],
+"2026-12-26": [
+"San Esteban, protomártir",
+"rojo",
+"Fiesta",
+"Fiesta D",
+"Adoración del Niño"
+],
+"2026-12-27": [
+"Fiesta de la Sagrada Familia",
+"blanco",
+"Fiesta",
+"Fiesta A",
+"ExSo. (Consagración) Adoración del Niño · [San Juan, apóstol]"
+],
+"2026-12-28": [
+"Santos inocentes, mártires",
+"blanco",
+"Fiesta",
+"Fiesta B",
+"Ip, ExSi. Adoración del Niño"
+],
+"2026-12-29": [
+"V día de la Octava de Navidad",
+"blanco",
+"",
+"Fiesta D",
+""
+],
+"2026-12-30": [
+"VI día de la Octava de Navidad",
+"blanco",
+"",
+"Fiesta D",
+""
+],
+"2026-12-31": [
+"VII día de la Octava de Navidad",
+"blanco",
+"",
+"Fiesta D",
+"Te Deum"
+]
+};
+
+const COLORES={blanco:"#f4efe6",verde:"#43a047",rojo:"#d64541",morado:"#8e5bb5",rosa:"#e58fb2",azul:"#4a7fd0"};
+const TURNOS={"2026-10-21":"Cheve","2026-10-22":"Pedro","2026-10-23":"P. Bernardo","2026-10-24":"Tito","2026-10-25":"Arthur","2026-10-26":"Migue","2026-10-27":"P. Vicente","2026-10-28":"George","2026-10-29":"P. Quico","2026-10-30":"Guy","2026-10-31":"Pedro","2026-11-01":"P. Bernardo","2026-11-02":"Tito","2026-11-03":"Arthur","2026-11-04":"Migue"};
+const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
+// Comidas tab (written by the routines): fecha -> {desayuno, cena}
+const COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7},"2026-10-23":{desayuno:8,desayunoNota:"+1 táper"}};
+const CUMPLES=[["11-01","P. Vicente"],["11-25","P. Rogelio"]];
+// Avisos tab: [desde, horaDesde, hasta, horaHasta, texto, tipo, destacado, tamaño Chico/Normal/Grande]
+const AVISOS=[
+ ["2026-11-01","","2026-11-01","","Cumpleaños del P. Vicente","Cumpleaños","No","Chico"],
+ ["2026-11-25","","2026-11-25","","Cumpleaños del P. Rogelio","Cumpleaños","No","Chico"],
+ ["2026-10-22","","2026-10-23","23:59","Sábado: Convivencia abierta de supernumerarios, en la mañana.","Evento","Sí","Normal"],
+ ["2026-10-31","","2026-11-01","23:59","Domingo 1: duermen en casa el P. Ricardo Sánchez y el P. Enrique Arce.","Visita","Sí","Normal"]];
+// Visitantes tab: [fecha(desde), nombre, hora, nota, hasta] -> Normal notice on its date
+const VISITANTES=[["2026-10-22","Txema Díaz-Donorroso","","","2026-10-24"]];
+const EJEMPLO_GRANDE="Hoy: comida con invitados · 14:30";
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const mins=s=>{const [h,m]=s.split(":").map(Number);return h*60+m;};
+const Q=new URLSearchParams(location.search);
+function ahora(){const n=new Date();const f=Q.get("fecha");if(f){const [y,mo,d]=f.split("-").map(Number);n.setFullYear(y,mo-1,d);}
+ const h=Q.get("hora");if(h){const [a,b]=h.split(":").map(Number);n.setHours(a,b);}return n;}
+function avisoActivo(a,now){const hoy=ymd(now),m=now.getHours()*60+now.getMinutes();
+ if(hoy<a[0]||(a[2]&&hoy>a[2]))return false;
+ if(a[5]==="Fin de semana"&&![0,6].includes(now.getDay()))return false;
+ if(a[1]&&m<mins(a[1]))return false; if(a[3]&&m>=mins(a[3]))return false; return true;}
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const Cap=s=>s[0].toUpperCase()+s.slice(1);
+function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+1);
+ fecha.textContent=`Mañana ${DIAS[man.getDay()]} ${man.getDate()} ${MESES[man.getMonth()].slice(0,3)}`;
+ const mm=MISA[ymd(man)],B=misaBox;
+ if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";}
+ else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";}
+ else{B.className="t mi si";mHay.textContent=`✓ Sí hay Misa · ${mm[1].split("–")[0]} · ${mm[2]}`;}
+ const ep=EPACTA[ymd(man)],E=mEp;
+ if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
+  E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
+   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(ep[4]&&ep[4].length<60?`<div class="nt">${esc(ep[4])}</div>`:"");}
+ else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
+ {const k=COMIDAS[ymd(man)]||{};cD.textContent=k.desayuno??"—";cDn.textContent=k.desayunoNota||"";}
+ tMan.textContent=NOMBRE(TURNOS[ymd(man)]||"—");{let fs=19;tMan.style.fontSize=fs+"px";while(tMan.scrollWidth>tMan.clientWidth&&fs>13){fs-=0.5;tMan.style.fontSize=fs+"px";}}
+ const a0=new Date(man);a0.setHours(12,0);const act=AVISOS.filter(a=>avisoActivo(a,a0)).map(a=>a[4]);
+ VISITANTES.filter(v=>v[0]<=ymd(man)&&ymd(man)<=(v[4]||v[0])).forEach(v=>act.push(`Visita: ${v[1]}${v[4]&&v[4]!==v[0]&&ymd(man)===v[4]?" (se va ese día)":""}`));
+ const md=man.getTime();CUMPLES.forEach(c=>{const [mo,d]=c[0].split("-").map(Number);const t=new Date(man.getFullYear(),mo-1,d,12);const dd=(t-md)/864e5;if(dd>=-1&&dd<=3&&!act.some(x=>x.includes(c[1])))act.push(`🎂 ${c[1]} · ${d} ${MESES[mo-1].slice(0,3)}`);});
+ listaAvisos.innerHTML=`<b>Avisos</b>`+(act.length?act.map(esc).join(" · "):"Sin avisos");
+ listaAvisos.style.display=act.length?"":"none";}
+const WMO=c=>c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?"🌧️":c<=77?"🌨️":c<=82?"🌦️":"⛈️";
+async function clima(){try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=20.67&longitude=-103.35&daily=weather_code,temperature_2m_min,temperature_2m_max,precipitation_probability_max&timezone=America%2FMexico_City&forecast_days=3");
+ const d=(await r.json()).daily;const n=ahora(),m=new Date(n);m.setDate(n.getDate()+1);const i=Math.max(0,d.time.indexOf(ymd(m)));
+ wT.textContent=WMO(d.weather_code[i])+` ${Math.round(d.temperature_2m_min[i])}/${Math.round(d.temperature_2m_max[i])}°`;wLl.textContent=`${d.precipitation_probability_max[i]}% lluvia`;}catch(e){console.log(e)}}
+render();clima();setInterval(()=>{render();clima()},30*60*1000);
+</script><a href="https://docs.google.com/forms/d/e/1FAIpQLSedxR44Wd56mPucRAxS_XTjJzlL_smq_gELbzzUXZ0eMFgxzw/viewform" target="_blank" rel="noopener" style="display:block;flex:none;padding:12px;border-radius:14px;background:#1565c0;color:#fff;font-size:20px;font-weight:700;text-align:center;text-decoration:none">📝 Reportar incidencia</a>
+</body></html>
