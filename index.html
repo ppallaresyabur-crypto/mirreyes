@@ -15,7 +15,7 @@ body{background:#e9edf2;color:#1d2733;font-family:"DejaVu Sans","Noto Sans","Not
 .w .ico{font-size:64px}.w b{font-size:72px}.w .d{font-size:22px;line-height:1.5;white-space:nowrap}
 .mi{grid-column:span 2;grid-row:span 3;color:#fff;gap:6px}
 .mi.si{background:#2e7d32}.mi.no{background:#c62828}.mi.na{background:#607080}
-.mi .h{color:#ffffffcc}
+.mi .h{color:#ffffffcc}.mi #mDia{align-self:flex-start;font-size:21px;font-weight:800;letter-spacing:2px;padding:4px 16px;border-radius:999px}.mi #mDia.hoy,.mi #mDia.man{background:#ffd54f;color:#3a2a00}
 .mi .y{font-size:72px;font-weight:800;line-height:1.05;margin-top:4px;white-space:nowrap}
 .mi .d{font-size:40px;font-weight:700;white-space:nowrap}.mi .d span{font-weight:400;opacity:.85}
 .bn{font-size:34px;font-weight:700;display:none;align-self:flex-start;background:#ffffff26;border-radius:12px;padding:4px 14px;margin-top:4px}.bn.on{display:block}.sac{font-size:28px;opacity:.92;margin-top:-4px}.pill.mx{background:#fff!important;color:#1d2733;border-left:10px solid #006847;border-right:10px solid #ce1126}.na{display:none;font-size:22px;opacity:.9}.na.on{display:block}
@@ -916,7 +916,7 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  // Misa: hoy hasta que termine, luego mañana
  const fM=(h&&h[0]!=="No"&&(String(h[1]).match(/(\d{1,2}):(\d{2})\D*$/)))||null;const corte=fM?(+fM[1])*60+(+fM[2]):600;const esHoy=m<corte,mD=esHoy?now:man;
  // Misa de mañana
- mDia.textContent=`${esHoy?"Hoy":"Mañana"} · ${DIAS[mD.getDay()]} ${mD.getDate()}`;
+ mDia.textContent=`${esHoy?"Hoy":"Mañana"} · ${DIAS[mD.getDay()]} ${mD.getDate()}`;mDia.className="h "+(esHoy?"hoy":"man");
  const mm=MISA[ymd(mD)],B=misaBox;
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";mDet.textContent="";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";mDet.innerHTML="";}
