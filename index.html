@@ -68,12 +68,12 @@ footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px
 <div class="t clk"><div class="fe" id="fecha"></div><b id="reloj">--:--</b></div>
 <div class="t w"><span class="ico" id="wIco">⛅</span><b id="wT">--°</b><div class="d"><div id="wHoy">Hoy --/--°</div><div id="wMan">Mañana --/--°</div></div></div>
 <div class="t mi" id="misaBox">
+  <div class="bn" id="mBenHoy" style="align-self:stretch;margin-bottom:10px;font-size:26px"></div>
   <div class="h" id="mDia">Mañana</div>
   <div class="y" id="mHay"></div>
   <div class="d" id="mDet"></div>
   <div class="sac" id="mSac"></div>
   <div class="bn" id="mBen"></div>
-  <div class="bn" id="mBenHoy"></div>
   <div class="na" id="mNota"></div>
   <div class="na" id="mExtra"></div>
   <div class="ep" id="mEp"></div>
@@ -975,7 +975,7 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  const act=AVISOS.filter(a=>avisoActivo(a,now));
  {const DN=["domingo","lunes","martes","miercoles","jueves","viernes","sabado"],dn=DN[now.getDay()],dm=DN[man.getDay()];
   const des=[9*60+45,8*60+30,8*60+30,8*60+30,8*60+30,8*60+30,8*60+45][now.getDay()];
-  const lim=a=>/^Limpieza/i.test(a[0]),nm=a=>{const t=a[0].replace(/^Limpieza zona (\w)/i,(x,c)=>"Limpieza "+c);return t.charAt(0).toUpperCase()+t.slice(1);};
+  const lim=a=>/^Limpieza/i.test(a[0]),nm=a=>{const t=a[0].replace(/^Limpieza zona (\w)/i,(x,c)=>"Limpieza "+c).replace(/^recibe ropa/i,"Entregamos ropa").replace(/^entrega ropa/i,"Entregan ropa");return t.charAt(0).toUpperCase()+t.slice(1);};
   const fin=a=>{const q=String(a[2]).match(/(\d{1,2}):(\d{2})\D*$/);return q?(+q[1])*60+(+q[2]):24*60;};
   const it=[];
   ADMIN.forEach(a=>{if(!a[1].includes(dn))return;if(lim(a)){if(m<fin(a))it.push("🧹 "+nm(a)+(a[2]?" "+a[2]:""));}else if(m<des)it.push("🧺 "+nm(a));});
