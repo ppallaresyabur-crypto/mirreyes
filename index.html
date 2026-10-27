@@ -66,7 +66,7 @@ footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px
 .ctab{display:none}.ctap{display:none}@media (max-width:700px){.ctab{display:block;width:100%;border:0;padding:18px 12px;border-radius:16px;background:#a8741a;color:#fff;font-size:22px;font-weight:700;font-family:inherit;box-shadow:0 2px 6px #0001}.ctap{position:fixed;inset:0;background:#e9edf2;padding:12px;flex-direction:column;gap:12px;z-index:50;overflow:auto}.ctap.on{display:flex}}</style></head>
 <body>
 <div class="t clk"><div class="fe" id="fecha"></div><b id="reloj">--:--</b></div>
-<div class="t w"><span class="ico" id="wIco">⛅</span><b id="wT">--°</b><div class="d"><div id="wHoy">Hoy --/--°</div><div id="wMan">Mañana --/--°</div></div></div>
+<div class="t w" style="position:relative"><button id="btnRec" aria-label="Recargar" style="position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;border:0;background:#ffffff40;color:#fff;font-size:20px;line-height:1;font-family:inherit;padding:0" onclick="location.reload()">⟳</button><span class="ico" id="wIco">⛅</span><b id="wT">--°</b><div class="d"><div id="wHoy">Hoy --/--°</div><div id="wMan">Mañana --/--°</div></div></div>
 <div class="t mi" id="misaBox">
   <div class="bn" id="mBenHoy" style="align-self:stretch;margin-bottom:10px;font-size:26px"></div>
   <div class="h" id="mDia">Mañana</div>
@@ -1031,7 +1031,7 @@ async function clima(){try{const r=await fetch("https://api.open-meteo.com/v1/fo
  const j=await r.json(),d=j.daily;wIco.textContent=WMO(j.current.weather_code);wT.textContent=Math.round(j.current.temperature_2m)+"°";
  wHoy.textContent=`Hoy ${Math.round(d.temperature_2m_min[0])}/${Math.round(d.temperature_2m_max[0])}° · 💧${d.precipitation_probability_max[0]}%`;
  wMan.textContent=`Mañana ${Math.round(d.temperature_2m_min[1])}/${Math.round(d.temperature_2m_max[1])}° · 💧${d.precipitation_probability_max[1]}%`;}catch(e){console.log(e)}}
-(function(){if(location.protocol.indexOf("http")!==0)return;var sig=null,u=function(){fetch(location.pathname+"?u="+Date.now(),{cache:"no-store"}).then(function(r){return r.text()}).then(function(t){var g=t.length,i=0,h=0;for(;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;g=g+":"+h;if(sig===null)sig=g;else if(g!==sig)location.reload();}).catch(function(){})};u();setInterval(u,3*60*1000);})();
+
 render();datos();setInterval(datos,5*60*1000);setInterval(render,15000);clima();setInterval(clima,30*60*1000);
 </script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});</script></body></html>
