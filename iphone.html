@@ -827,16 +827,17 @@ const COLORES={blanco:"#f4efe6",verde:"#43a047",rojo:"#d64541",morado:"#8e5bb5",
 const TURNOS={"2026-10-21":"Cheve","2026-10-22":"Pedro","2026-10-23":"P. Bernardo","2026-10-24":"Tito","2026-10-25":"Arthur","2026-10-26":"Migue","2026-10-27":"P. Vicente","2026-10-28":"George","2026-10-29":"P. Quico","2026-10-30":"Guy","2026-10-31":"Pedro","2026-11-01":"P. Bernardo","2026-11-02":"Tito","2026-11-03":"Arthur","2026-11-04":"Migue"};
 const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
 // Comidas tab (written by the routines): fecha -> {desayuno, cena}
-const COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7},"2026-10-23":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-24":{desayuno:9,desayunoNota:"+1 táper",cena:6},"2026-10-25":{desayuno:9,desayunoNota:"+1 táper",cena:9},"2026-10-26":{desayuno:7,desayunoNota:"+1 táper"}};
+const COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7},"2026-10-23":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-24":{desayuno:9,desayunoNota:"+1 táper",cena:6},"2026-10-25":{desayuno:9,desayunoNota:"+1 táper",cena:9},"2026-10-26":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-27":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-28":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-29":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-30":{desayuno:9}};
 const CUMPLES=[["11-01","P. Vicente"],["11-25","P. Rogelio"]];
 // Avisos tab: [desde, horaDesde, hasta, horaHasta, texto, tipo, destacado, tamaño Chico/Normal/Grande]
 const AVISOS=[
  ["2026-11-01","","2026-11-01","","Cumpleaños del P. Vicente","Cumpleaños","No","Chico"],
  ["2026-11-25","","2026-11-25","","Cumpleaños del P. Rogelio","Cumpleaños","No","Chico"],
  ["2026-10-22","","2026-10-23","23:59","Sábado: Convivencia abierta de supernumerarios, en la mañana.","Evento","Sí","Normal"],
- ["2026-10-31","","2026-11-01","23:59","Domingo 1: duermen en casa el P. Ricardo Sánchez y el P. Enrique Arce.","Visita","Sí","Normal"]];
+ ["2026-10-30","","2026-11-01","23:59","Domingo 1: duermen en casa el P. Ricardo Sánchez, el P. Enrique Arce y el P. José Ángel Márquez.","Visita","Sí","Normal"],
+ ["2026-10-26","","2026-10-31","23:59","Domingo 1: cumpleaños del P. Vicente","Evento","Sí","Normal"]];
 // Visitantes tab: [fecha(desde), nombre, hora, nota, hasta] -> Normal notice on its date
-const VISITANTES=[["2026-10-22","Txema Díaz-Donorroso","","","2026-10-24"],["2026-11-01","Enrique Arce","","","2026-11-02"],["2026-11-10","Emilio Maus","","","2026-11-12"],["2026-11-01","Ricardo Sánchez","","","2026-11-02"],["2026-11-01","José Ángel Márquez","","","2026-11-02"]];
+const VISITANTES=[["2026-10-22","Txema Díaz-Donorroso","","Se va el sábado 24","2026-10-24"],["2026-11-10","Emilio Maus","","Duerme el 10 y el 11","2026-11-12"]];
 const EJEMPLO_GRANDE="Hoy: comida con invitados · 14:30";
 const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"],MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
