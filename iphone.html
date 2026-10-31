@@ -827,7 +827,7 @@ const COLORES={blanco:"#f4efe6",verde:"#43a047",rojo:"#d64541",morado:"#8e5bb5",
 const TURNOS={"2026-10-21":"Cheve","2026-10-22":"Pedro","2026-10-23":"P. Bernardo","2026-10-24":"Tito","2026-10-25":"Arthur","2026-10-26":"Migue","2026-10-27":"P. Vicente","2026-10-28":"George","2026-10-29":"P. Quico","2026-10-30":"Guy","2026-10-31":"Pedro","2026-11-01":"P. Bernardo","2026-11-02":"Tito","2026-11-03":"Arthur","2026-11-04":"Migue"};
 const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
 // Comidas tab (written by the routines): fecha -> {desayuno, cena}
-const COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7},"2026-10-23":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-24":{desayuno:9,desayunoNota:"+1 táper",cena:6},"2026-10-25":{desayuno:9,desayunoNota:"+1 táper",cena:9},"2026-10-26":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-27":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-28":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-29":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-30":{desayuno:9}};
+let COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7},"2026-10-23":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-24":{desayuno:9,desayunoNota:"+1 táper",cena:6},"2026-10-25":{desayuno:9,desayunoNota:"+1 táper",cena:9},"2026-10-26":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-27":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-28":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-29":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-30":{desayuno:9}};
 const CUMPLES=[["11-01","P. Vicente"],["11-25","P. Rogelio"]];
 // Avisos tab: [desde, horaDesde, hasta, horaHasta, texto, tipo, destacado, tamaño Chico/Normal/Grande]
 const AVISOS=[
@@ -873,7 +873,22 @@ const WMO=c=>c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?
 async function clima(){try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=20.67&longitude=-103.35&daily=weather_code,temperature_2m_min,temperature_2m_max,precipitation_probability_max&timezone=America%2FMexico_City&forecast_days=3");
  const d=(await r.json()).daily;const n=ahora(),m=new Date(n);m.setDate(n.getDate()+1);const i=Math.max(0,d.time.indexOf(ymd(m)));
  wT.textContent=WMO(d.weather_code[i])+` ${Math.round(d.temperature_2m_min[i])}/${Math.round(d.temperature_2m_max[i])}°`;wLl.textContent=`${d.precipitation_probability_max[i]}% lluvia`;}catch(e){console.log(e)}}
-render();clima();setInterval(()=>{render();clima()},30*60*1000);
+
+/* ---- Comidas en vivo desde la hoja "Pantalla Naciones Unidas"; si falla, se queda el COMIDAS de arriba como respaldo */
+const SHEET_ID_C="1M5JRw0oF-7KKrirtElFJocPyhwfvTJoriLYul5BGSD0";
+function csvC(t){const R=[];let row=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];
+ if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}
+ else if(ch=='"')q=true;else if(ch==","){row.push(c);c="";}else if(ch=="\n"){row.push(c);R.push(row);row=[];c="";}else if(ch!="\r")c+=ch;}
+ if(c||row.length){row.push(c);R.push(row);}return R;}
+const F8C=d=>{d=(d||"").trim();const m=d.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return m[1]+"-"+m[2].padStart(2,"0")+"-"+m[3].padStart(2,"0");
+ const k=d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(k)return k[3]+"-"+k[1].padStart(2,"0")+"-"+k[2].padStart(2,"0");return d;};
+async function comidasVivo(){try{const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID_C}/gviz/tq?tqx=out:csv&headers=1&sheet=Comidas&t=${Date.now()}`,{cache:"no-store"});
+ if(!r.ok)throw new Error("Comidas "+r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error("Comidas no CSV");
+ const o={};csvC(t).slice(1).forEach(x=>{x=x.map(v=>(v||"").trim());const f=F8C(x[0]);if(!/^\d{4}-\d{2}-\d{2}$/.test(f))return;
+  const n=v=>v===""||isNaN(+v)?undefined:+v;const nota=x[4]||"";const md=nota.match(/desayuno[^:]*:\s*(\d+)/i);const tp=nota.match(/\(([^)]*t[aá]per[^)]*)\)/i);
+  const e={desayuno:n(x[1])??(md?+md[1]:undefined),comida:n(x[2]),cena:n(x[3])};if(tp)e.desayunoNota=tp[1].trim();o[f]=e;});
+ if(Object.keys(o).length){COMIDAS=Object.assign({},COMIDAS,o);render();}}catch(e){console.log("Comidas respaldo:",e);}}
+render();clima();comidasVivo();setInterval(()=>{comidasVivo();clima()},30*60*1000);
 </script><div style="display:flex;gap:8px;flex:none"><a href="https://docs.google.com/forms/d/e/1FAIpQLSedxR44Wd56mPucRAxS_XTjJzlL_smq_gELbzzUXZ0eMFgxzw/viewform" target="_blank" rel="noopener" style="display:block;flex:1;padding:12px 6px;border-radius:14px;background:#1565c0;color:#fff;font-size:16px;font-weight:700;text-align:center;text-decoration:none">📝 Incidencia</a><button id="btnCta" style="flex:1;padding:12px 6px;border:0;border-radius:14px;background:#a8741a;color:#fff;font-size:16px;font-weight:700;font-family:inherit">💳 Cuentas</button></div><div id="cta" style="display:none;position:fixed;inset:0;background:#e9edf2;padding:10px;flex-direction:column;gap:8px;z-index:9;overflow:auto"><style>#cta .t{flex:none}</style>
 <div class="t top" style="font-size:19px">Cuentas para transferencias</div>
 <div class="t" style="padding:8px 12px"><div style="font-size:22px;font-weight:800;color:#1d2733">Pensión a la AO</div>
