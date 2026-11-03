@@ -860,15 +860,23 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  const ep=EPACTA[ymd(man)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
-   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(ep[4]&&ep[4].length<60?`<div class="nt">${esc(ep[4])}</div>`:"");}
+   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(SINSUF(ep[4])&&SINSUF(ep[4]).length<60?`<div class="nt">${esc(SINSUF(ep[4]))}</div>`:"");}
  else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
  {const k=COMIDAS[ymd(man)]||{};cD.textContent=k.desayuno??"—";cDn.textContent=k.desayunoNota||"";}
  tMan.textContent=NOMBRE(TURNOS[ymd(man)]||"—");{let fs=19;tMan.style.fontSize=fs+"px";while(tMan.scrollWidth>tMan.clientWidth&&fs>13){fs-=0.5;tMan.style.fontSize=fs+"px";}}
  const a0=new Date(man);a0.setHours(12,0);const act=AVISOS.filter(a=>avisoActivo(a,a0)).map(a=>a[4]);
+ {const sf=SUFRAGIO(man);if(sf)act.unshift(SUF_EMO(man)+" Sufragios de mañana: "+sf);}
  VISITANTES.filter(v=>v[0]<=ymd(man)&&ymd(man)<=(v[4]||v[0])).forEach(v=>act.push(`Visita: ${v[1]}${v[4]&&v[4]!==v[0]&&ymd(man)===v[4]?" (se va ese día)":""}`));
  const md=man.getTime();CUMPLES.forEach(c=>{const [mo,d]=c[0].split("-").map(Number);const t=new Date(man.getFullYear(),mo-1,d,12);const dd=(t-md)/864e5;if(dd>=-1&&dd<=3&&!act.some(x=>x.includes(c[1])))act.push(`🎂 ${c[1]} · ${d} ${MESES[mo-1].slice(0,3)}`);});
  listaAvisos.innerHTML=`<b>Avisos</b>`+(act.length?act.map(esc).join(" · "):"Sin avisos");
  listaAvisos.style.display=act.length?"":"none";}
+const SUF_RX=/\s*(Inicia el 1er novenario por los fieles de la Obra fallecidos|\d°\s*día del (1er|2°) Novenario|2° novenario por los fieles de la Obra fallecidos\.?)/gi;
+const SUF_MISA=/Misa por (los fieles de la Obra fallecidos desde el 2-XI del año anterior|los Difuntos de la Región|los cp, ae y bienhechores fallecidos|los padres fallecidos de todos los fieles de la Obra)/gi;
+const SINSUF=t=>String(t).replace(SUF_MISA,"Misa de difuntos").replace(SUF_RX,"").replace(/\s*\|\s*(\|\s*)+/g," | ").replace(/^\s*\|\s*|\s*\|\s*$/g,"").trim();
+const SUF_EMO=d=>["⚰️","💀","🕯️","🙏🏻","👻"][(d.getDate()-1)%5];
+function SUFRAGIO(d){if(d.getMonth()!==10)return "";const n=d.getDate(),C="Todos los de casa difuntos";
+ const L={1:"Todos los santos",2:"Todos los difuntos",3:"Todos los de casa fallecidos desde el 2 de noviembre del año anterior",4:"Todos los difuntos de la Región",23:"Cooperadores, asistentes eclesiásticos y bienhechores fallecidos",24:"Padres difuntos de todos los de casa"};
+ if(L[n])return L[n];if(n>=5&&n<=13)return C+" ("+(n-4)+"/9)";if(n>=14&&n<=22)return C+" ("+(n-13)+"/9)";return "";}
 const WMO=c=>c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?"🌧️":c<=77?"🌨️":c<=82?"🌦️":"⛈️";
 async function clima(){try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=20.67&longitude=-103.35&daily=weather_code,temperature_2m_min,temperature_2m_max,precipitation_probability_max&timezone=America%2FMexico_City&forecast_days=3");
  const d=(await r.json()).daily;const n=ahora(),m=new Date(n);m.setDate(n.getDate()+1);const i=Math.max(0,d.time.indexOf(ymd(m)));
