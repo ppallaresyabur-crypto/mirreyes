@@ -13,6 +13,7 @@ body{background:#e9edf2;color:#1d2733;font-family:-apple-system,"DejaVu Sans","N
 .mi{color:#fff;display:flex;flex-direction:column;gap:7px;padding:11px 12px;flex:1}
 .mi.si{background:#2e7d32}.mi.no{background:#c62828}.mi.na{background:#607080}
 .mi .y{font-size:19.5px;white-space:nowrap;font-weight:800;line-height:1.1}
+.bn{display:none;align-self:stretch;background:#ffffff26;border-radius:12px;padding:6px 12px;font-size:18px;font-weight:700;margin-top:2px}.bn.on{display:block}
 .ep{background:#ffffff22;border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center}
 .ep.fiesta{background:#fff;color:#1d2733;box-shadow:0 0 0 3px #ffd54f}
 .ep .cel{font-size:24px;font-weight:700;line-height:1.2}
@@ -28,7 +29,7 @@ body{background:#e9edf2;color:#1d2733;font-family:-apple-system,"DejaVu Sans","N
 .av b{font-size:11px;color:#8a5a00;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
 </style></head><body>
 <div class="t top" id="fecha"></div>
-<div class="t mi" id="misaBox"><div class="y" id="mHay"></div><div class="ep" id="mEp"></div></div>
+<div class="t mi" id="misaBox"><div class="y" id="mHay"></div><div class="bn" id="mVela"></div><div class="ep" id="mEp"></div></div>
 <div class="row"><div class="t"><div class="h">Turno</div><div class="v" id="tMan">—</div></div>
 <div class="t"><div class="h">Desayuno</div><div class="v"><span id="cD">—</span> lugares<small id="cDn"></small></div></div>
 <div class="t w"><div class="h">Clima</div><div class="v"><span id="wT">--/--°</span><small id="wLl">--% lluvia</small></div></div></div>
@@ -857,10 +858,12 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";}
  else{B.className="t mi si";mHay.textContent=`✓ Sí hay Misa · ${mm[1].split("–")[0]} · ${mm[2]}`;}
+ if(hayVela(man)){mVela.textContent="🕯️ Vela 21:00";mVela.className="bn on";}else{mVela.className="bn";mVela.textContent="";}
  const ep=EPACTA[ymd(man)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
+  const nota=GLOS(SINSUF(ep[4]||""));
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
-   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(SINSUF(ep[4])&&SINSUF(ep[4]).length<60?`<div class="nt">${esc(SINSUF(ep[4]))}</div>`:"");}
+   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(nota&&nota.length<60?`<div class="nt">${esc(nota)}</div>`:"");}
  else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
  {const k=COMIDAS[ymd(man)]||{};cD.textContent=k.desayuno??"—";cDn.textContent=k.desayunoNota||"";}
  tMan.textContent=NOMBRE(TURNOS[ymd(man)]||"—");{let fs=19;tMan.style.fontSize=fs+"px";while(tMan.scrollWidth>tMan.clientWidth&&fs>13){fs-=0.5;tMan.style.fontSize=fs+"px";}}
@@ -873,6 +876,8 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
 const SUF_RX=/\s*(Inicia el 1er novenario por los fieles de la Obra fallecidos|\d°\s*día del (1er|2°) Novenario|2° novenario por los fieles de la Obra fallecidos\.?)/gi;
 const SUF_MISA=/Misa por (los fieles de la Obra fallecidos desde el 2-XI del año anterior|los Difuntos de la Región|los cp, ae y bienhechores fallecidos|los padres fallecidos de todos los fieles de la Obra)/gi;
 const SINSUF=t=>String(t).replace(SUF_MISA,"Misa de difuntos").replace(SUF_RX,"").replace(/\s*\|\s*(\|\s*)+/g," | ").replace(/^\s*\|\s*|\s*\|\s*$/g,"").trim();
+const GLOS=t=>String(t).replace(/\bExSi\b\.?/g,"Exposición simple").replace(/\bExSo\b\.?/g,"Exposición solemne").replace(/\bIp\b/g,"Indulgencia").replace(/conf sm/gi,"Confesiones").replace(/\s*\bVela(?:\s*21:00)?\b/g,"").replace(/\(sin c[oó]digo[^)]*\)/gi,"").trim();
+const hayVela=d=>{const e=EPACTA[ymd(d)]||[];return !!(e[6]||/\bVela\b/.test(e[4]||""));};
 const SUF_EMO=d=>["⚰️","💀","🕯️","🙏🏻","👻"][(d.getDate()-1)%5];
 function SUFRAGIO(d){if(d.getMonth()!==10)return "";const n=d.getDate(),C="Todos los de casa difuntos";
  const L={1:"Todos los santos",2:"Todos los difuntos",3:"Todos los de casa fallecidos desde el 2/nov del año anterior",4:"Todos los difuntos de la Región",23:"Cooperadores, asistentes eclesiásticos y bienhechores fallecidos",24:"Padres difuntos de todos los de casa"};
