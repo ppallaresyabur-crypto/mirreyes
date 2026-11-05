@@ -70,11 +70,13 @@ footer{flex-wrap:wrap;white-space:normal;gap:8px 16px;font-size:16px;padding:6px
 <div class="t w" style="position:relative"><button id="btnRec" aria-label="Recargar" style="position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;border:0;background:#ffffff40;color:#fff;font-size:20px;line-height:1;font-family:inherit;padding:0" onclick="location.reload()">⟳</button><span class="ico" id="wIco">⛅</span><b id="wT">--°</b><div class="d"><div id="wHoy">Hoy --/--°</div><div id="wMan">Mañana --/--°</div></div></div>
 <div class="t mi" id="misaBox">
   <div class="bn" id="mBenHoy" style="align-self:stretch;margin-bottom:10px;font-size:26px"></div>
+  <div class="bn" id="mVelaHoy" style="align-self:stretch;margin-bottom:10px;font-size:26px"></div>
   <div class="h" id="mDia">Mañana</div>
   <div class="y" id="mHay"></div>
   <div class="d" id="mDet"></div>
   <div class="sac" id="mSac"></div>
   <div class="bn" id="mBen"></div>
+  <div class="bn" id="mVela"></div>
   <div class="na" id="mNota"></div>
   <div class="na" id="mExtra"></div>
   <div class="ep" id="mEp"></div>
@@ -927,7 +929,7 @@ const SUF_EMO=d=>["⚰️","💀","🕯️","🙏🏻","👻"][(d.getDate()-1)%5
 function SUFRAGIO(d){if(d.getMonth()!==10)return "";const n=d.getDate(),C="Todos los de casa difuntos";
  const L={1:"Todos los santos",2:"Todos los difuntos",3:"Todos los de casa fallecidos desde el 2/nov del año anterior",4:"Todos los difuntos de la Región",23:"Cooperadores, asistentes eclesiásticos y bienhechores fallecidos",24:"Padres difuntos de todos los de casa"};
  if(L[n])return L[n];if(n>=5&&n<=13)return C+" ("+(n-4)+"/9)";if(n>=14&&n<=22)return C+" ("+(n-13)+"/9)";return "";}
-const GLOS=t=>String(t).replace(/\bExSi\b\.?/g,"Exposición simple").replace(/\bExSo\b\.?/g,"Exposición solemne").replace(/\bIp\b/g,"Indulgencia").replace(/conf sm/gi,"Confesiones").replace(/\bVela\b(?! 21)/g,"Vela 21:00").replace(/\(sin c[oó]digo[^)]*\)/gi,"");
+const GLOS=t=>String(t).replace(/\bExSi\b\.?/g,"Exposición simple").replace(/\bExSo\b\.?/g,"Exposición solemne").replace(/\bIp\b/g,"Indulgencia").replace(/conf sm/gi,"Confesiones").replace(/\s*\bVela(?:\s*21:00)?\b/g,"").replace(/\(sin c[oó]digo[^)]*\)/gi,"").trim();
 const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
 function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+1);
  const m=now.getHours()*60+now.getMinutes();
@@ -953,8 +955,11 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  const sc=mm&&mm[0]!=="No"&&SAC[mm[7]];mSac.textContent=sc||"";mSac.style.display=sc?"":"none";
  const epm=EPACTA[ymd(mD)]||[],ex=[];
  if(epm[3]==="Fiesta A")ex.push(bn?"Aperitivo 14:10 · Comida 14:30":"Bendición 13:50 · Aperitivo 14:10 · Comida 14:30");
- if(epm[6])ex.push("Vela 21:00");
  mExtra.textContent=ex.join(" · ");mExtra.className="na"+(ex.length?" on":"");
+ const hayVela=d=>{const e=EPACTA[ymd(d)]||[];return !!(e[6]||/\bVela\b/.test(e[4]||""));};
+ if(hayVela(mD)){mVela.textContent="🕯️ Vela 21:00";mVela.className="bn on";}else{mVela.className="bn";mVela.textContent="";}
+ if(!esHoy&&hayVela(now)&&m<21*60){mVelaHoy.textContent="🕯️ Hoy: Vela 21:00";mVelaHoy.className="bn on";}
+ else{mVelaHoy.className="bn";mVelaHoy.textContent="";}
  const ep=EPACTA[ymd(mD)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
@@ -993,7 +998,6 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
    const rt=(seg(now)&&m<14*60)||(now.getDay()===6&&seg(ma2)&&m>=14*60+30);
    admH.style.display=rt?"none":"";admBox.style.background=rt?"#2e5d8a":"";if(rt)tAd.innerHTML='<div style="font-size:36px;font-weight:700;color:#fff">🕊️ Retiro mensual</div>';}
  {const sf=SUFRAGIO(now);if(sf)act.unshift(["","","","",SUF_EMO(now)+" Sufragios de hoy: "+sf,"Sufragio","Sí","Normal",false,"suf"]);}
- if((EPACTA[ymd(now)]||[])[6])act.push(["","","","","Hoy: Vela 21:00","Vela","Sí","Normal"]);
  VISITANTES.filter(v=>v[0]<=ymd(now)&&ymd(now)<=(v[4]||v[0])).forEach(v=>act.push(["","","","","Hoy nos visita: "+v[1]+(v[4]&&v[4]!==v[0]&&ymd(now)===v[4]?" (se va hoy)":"")+(v[2]?" · "+v[2]:""),"Visita","Sí","Normal"]));
  if(Q.get("demo")==="grande")act.push(["","","","",EJEMPLO_GRANDE,"","","Grande",true]);
  const vis=act.filter(a=>(a[7]||"Normal")!=="Grande").sort((x,y)=>(x[7]==="Chico")-(y[7]==="Chico"));
