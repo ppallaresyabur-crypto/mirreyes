@@ -13,7 +13,6 @@ body{background:#e9edf2;color:#1d2733;font-family:-apple-system,"DejaVu Sans","N
 .mi{color:#fff;display:flex;flex-direction:column;gap:7px;padding:11px 12px;flex:1}
 .mi.si{background:#2e7d32}.mi.no{background:#c62828}.mi.na{background:#607080}
 .mi .y{font-size:19.5px;white-space:nowrap;font-weight:800;line-height:1.1}
-.bn{display:none;align-self:stretch;background:#ffffff26;border-radius:12px;padding:6px 12px;font-size:18px;font-weight:700;margin-top:2px}.bn.on{display:block}
 .ep{background:#ffffff22;border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;gap:6px;flex:1;justify-content:center}
 .ep.fiesta{background:#fff;color:#1d2733;box-shadow:0 0 0 3px #ffd54f}
 .ep .cel{font-size:24px;font-weight:700;line-height:1.2}
@@ -24,13 +23,14 @@ body{background:#e9edf2;color:#1d2733;font-family:-apple-system,"DejaVu Sans","N
 .ep .nt{font-size:15px;opacity:.75}
 .row{display:flex;gap:6px}.row .t{flex:1;padding:8px 10px;min-width:0}
 .v{font-size:19px;font-weight:700;margin-top:3px;line-height:1.15;white-space:nowrap}.v small{display:block;font-size:12px;font-weight:400;opacity:.75}
+.s{font-size:13px;font-weight:400;margin-top:4px;color:#6b7785;line-height:1.2;white-space:nowrap}
 .w{background:linear-gradient(135deg,#4fa3e0,#7cc4f0);color:#fff}.w .h{color:#ffffffd8}
 .av{font-size:16px;background:#fff3cd;padding:8px 12px}
 .av b{font-size:11px;color:#8a5a00;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
 </style></head><body>
 <div class="t top" id="fecha"></div>
-<div class="t mi" id="misaBox"><div class="y" id="mHay"></div><div class="bn" id="mVela"></div><div class="ep" id="mEp"></div></div>
-<div class="row"><div class="t"><div class="h">Turno</div><div class="v" id="tMan">—</div></div>
+<div class="t mi" id="misaBox"><div class="y" id="mHay"></div><div class="ep" id="mEp"></div></div>
+<div class="row"><div class="t"><div class="h">Turno</div><div class="v" id="tHoy">—</div><div class="s" id="tMan"></div><div class="s" id="tRtm" style="display:none"></div></div>
 <div class="t"><div class="h">Desayuno</div><div class="v"><span id="cD">—</span> lugares<small id="cDn"></small></div></div>
 <div class="t w"><div class="h">Clima</div><div class="v"><span id="wT">--/--°</span><small id="wLl">--% lluvia</small></div></div></div>
 <div class="t av" id="listaAvisos"></div>
@@ -827,6 +827,10 @@ const EPACTA={
 const COLORES={blanco:"#f4efe6",verde:"#43a047",rojo:"#d64541",morado:"#8e5bb5",rosa:"#e58fb2",azul:"#4a7fd0"};
 const TURNOS={"2026-10-21":"Cheve","2026-10-22":"Pedro","2026-10-23":"P. Bernardo","2026-10-24":"Tito","2026-10-25":"Arthur","2026-10-26":"Migue","2026-10-27":"P. Vicente","2026-10-28":"George","2026-10-29":"P. Quico","2026-10-30":"Guy","2026-10-31":"Pedro","2026-11-01":"P. Bernardo","2026-11-02":"Tito","2026-11-03":"Arthur","2026-11-04":"Migue"};
 const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
+const RTM_CHARLA={1:"Arthur",2:"Guy",3:"Cheve",4:"Tito",5:"Lalo",6:"César",7:"Güicho",8:"Arthur",9:"Guy",10:"Cheve",11:"Lalo",12:"Tito"};
+function segundoDomingo(y,m0){const d=new Date(y,m0,1);return 1+((7-d.getDay())%7)+7;}
+function charlaRtm(now){const y=now.getFullYear(),m0=now.getMonth();const start=new Date(y,m0,1,0,0,0,0);const end=new Date(y,m0,segundoDomingo(y,m0),11,30,0,0);return(now>=start&&now<=end)?RTM_CHARLA[m0+1]:null;}
+
 // Comidas tab (written by the routines): fecha -> {desayuno, cena}
 let COMIDAS={"2026-10-22":{desayuno:6,desayunoNota:"+2 táper",comida:9,comidaNota:"+1 táper",cena:7},"2026-10-23":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-24":{desayuno:9,desayunoNota:"+1 táper",cena:6},"2026-10-25":{desayuno:9,desayunoNota:"+1 táper",cena:9},"2026-10-26":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-27":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-28":{desayuno:8,desayunoNota:"+1 táper"},"2026-10-29":{desayuno:7,desayunoNota:"+1 táper"},"2026-10-30":{desayuno:9}};
 const CUMPLES=[["11-01","P. Vicente"],["11-25","P. Rogelio"]];
@@ -858,15 +862,13 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
  if(!mm){B.className="t mi na";mHay.textContent="Misa: por confirmar";}
  else if(mm[0]==="No"){B.className="t mi no";mHay.textContent="✕ No hay Misa";}
  else{B.className="t mi si";mHay.textContent=`✓ Sí hay Misa · ${mm[1].split("–")[0]} · ${mm[2]}`;}
- if(hayVela(man)){mVela.textContent="🕯️ Vela 21:00";mVela.className="bn on";}else{mVela.className="bn";mVela.textContent="";}
  const ep=EPACTA[ymd(man)],E=mEp;
  if(ep){const fi=/^(Solemnidad|Fiesta)/.test(ep[2]);const c=ep[1].split(" ")[0];E.className="ep"+(fi?" fiesta":"");
-  const nota=GLOS(SINSUF(ep[4]||""));
   E.innerHTML=`<div class="cel">${fi?"★ ":""}${esc(ep[0])}</div><div class="meta"><span class="pill"><span class="dot" style="background:${COLORES[c]||"#888"}"></span>${esc(ep[1])}</span>`+
-   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(nota&&nota.length<60?`<div class="nt">${esc(nota)}</div>`:"");}
+   (ep[2]?`<span class="pill${fi?" rk":""}">${esc(ep[2])}</span>`:"")+(ep[3]?`<span class="pill fa">${esc(ep[3])}</span>`:"")+`</div>`+(SINSUF(ep[4])&&SINSUF(ep[4]).length<60?`<div class="nt">${esc(SINSUF(ep[4]))}</div>`:"");}
  else{E.className="ep";E.innerHTML=`<div class="nt">Epacta: pendiente</div>`;}
  {const k=COMIDAS[ymd(man)]||{};cD.textContent=k.desayuno??"—";cDn.textContent=k.desayunoNota||"";}
- tMan.textContent=NOMBRE(TURNOS[ymd(man)]||"—");{let fs=19;tMan.style.fontSize=fs+"px";while(tMan.scrollWidth>tMan.clientWidth&&fs>13){fs-=0.5;tMan.style.fontSize=fs+"px";}}
+ tHoy.textContent=NOMBRE(TURNOS[ymd(ahora())]||"—");{let fs=19;tHoy.style.fontSize=fs+"px";while(tHoy.scrollWidth>tHoy.clientWidth&&fs>13){fs-=0.5;tHoy.style.fontSize=fs+"px";}}{const tm=TURNOS[ymd(man)];tMan.textContent=tm?"Mañana: "+NOMBRE(tm):"";tMan.style.display=tm?"":"none";}{const rtm=charlaRtm(ahora());tRtm.textContent=rtm?"Charla del rtm · "+rtm:"";tRtm.style.display=rtm?"":"none";}
  const a0=new Date(man);a0.setHours(12,0);const act=AVISOS.filter(a=>avisoActivo(a,a0)).map(a=>a[4]);
  {const hoy=ahora(),sf=SUFRAGIO(hoy);if(sf)act.unshift(SUF_EMO(hoy)+" Sufragios de hoy: "+sf);}
  VISITANTES.filter(v=>v[0]<=ymd(man)&&ymd(man)<=(v[4]||v[0])).forEach(v=>act.push(`Visita: ${v[1]}${v[4]&&v[4]!==v[0]&&ymd(man)===v[4]?" (se va ese día)":""}`));
@@ -876,11 +878,9 @@ function render(){const now=ahora(),man=new Date(now);man.setDate(now.getDate()+
 const SUF_RX=/\s*(Inicia el 1er novenario por los fieles de la Obra fallecidos|\d°\s*día del (1er|2°) Novenario|2° novenario por los fieles de la Obra fallecidos\.?)/gi;
 const SUF_MISA=/Misa por (los fieles de la Obra fallecidos desde el 2-XI del año anterior|los Difuntos de la Región|los cp, ae y bienhechores fallecidos|los padres fallecidos de todos los fieles de la Obra)/gi;
 const SINSUF=t=>String(t).replace(SUF_MISA,"Misa de difuntos").replace(SUF_RX,"").replace(/\s*\|\s*(\|\s*)+/g," | ").replace(/^\s*\|\s*|\s*\|\s*$/g,"").trim();
-const GLOS=t=>String(t).replace(/\bExSi\b\.?/g,"Exposición simple").replace(/\bExSo\b\.?/g,"Exposición solemne").replace(/\bIp\b/g,"Indulgencia").replace(/conf sm/gi,"Confesiones").replace(/\s*\bVela(?:\s*21:00)?\b/g,"").replace(/\(sin c[oó]digo[^)]*\)/gi,"").trim();
-const hayVela=d=>{const e=EPACTA[ymd(d)]||[];return !!(e[6]||/\bVela\b/.test(e[4]||""));};
 const SUF_EMO=d=>["⚰️","💀","🕯️","🙏🏻","👻"][(d.getDate()-1)%5];
 function SUFRAGIO(d){if(d.getMonth()!==10)return "";const n=d.getDate(),C="Todos los de casa difuntos";
- const L={1:"Todos los santos",2:"Todos los difuntos",3:"Todos los de casa fallecidos desde el 2/nov del año anterior",4:"Todos los difuntos de la Región",23:"Cooperadores, asistentes eclesiásticos y bienhechores fallecidos",24:"Padres difuntos de todos los de casa"};
+ const L={1:"Todos los santos",2:"Todos los difuntos",3:"Todos los de casa fallecidos desde el 2 de noviembre del año anterior",4:"Todos los difuntos de la Región",23:"Cooperadores, asistentes eclesiásticos y bienhechores fallecidos",24:"Padres difuntos de todos los de casa"};
  if(L[n])return L[n];if(n>=5&&n<=13)return C+" ("+(n-4)+"/9)";if(n>=14&&n<=22)return C+" ("+(n-13)+"/9)";return "";}
 const WMO=c=>c===0?"☀️":c<=2?"🌤️":c===3?"☁️":c<=48?"🌫️":c<=67?"🌧️":c<=77?"🌨️":c<=82?"🌦️":"⛈️";
 async function clima(){try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=20.67&longitude=-103.35&daily=weather_code,temperature_2m_min,temperature_2m_max,precipitation_probability_max&timezone=America%2FMexico_City&forecast_days=3");
