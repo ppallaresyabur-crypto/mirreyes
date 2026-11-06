@@ -827,7 +827,7 @@ const EPACTA={
 const COLORES={blanco:"#f4efe6",verde:"#43a047",rojo:"#d64541",morado:"#8e5bb5",rosa:"#e58fb2",azul:"#4a7fd0"};
 const TURNOS={"2026-10-21":"Cheve","2026-10-22":"Pedro","2026-10-23":"P. Bernardo","2026-10-24":"Tito","2026-10-25":"Arthur","2026-10-26":"Migue","2026-10-27":"P. Vicente","2026-10-28":"George","2026-10-29":"P. Quico","2026-10-30":"Guy","2026-10-31":"Pedro","2026-11-01":"P. Bernardo","2026-11-02":"Tito","2026-11-03":"Arthur","2026-11-04":"Migue"};
 const NOMBRE=n=>n==="Wicho"?"ウィチョ":n;
-const RTM_CHARLA={1:"Arthur",2:"Guy",3:"Cheve",4:"Tito",5:"Lalo",6:"César",7:"Güicho",8:"Arthur",9:"Guy",10:"Cheve",11:"Lalo",12:"Tito"};
+const RTM_CHARLA={1:"Arthur",2:"Guy",3:"Cheve",4:"Tito",5:"Lalo",6:"César",7:"Güicho",8:"Arthur",9:"Guy",10:"Lalo",11:"Tito",12:"Tito"};
 function segundoDomingo(y,m0){const d=new Date(y,m0,1);return 1+((7-d.getDay())%7)+7;}
 function charlaRtm(now){const y=now.getFullYear(),m0=now.getMonth();const start=new Date(y,m0,1,0,0,0,0);const end=new Date(y,m0,segundoDomingo(y,m0),11,30,0,0);return(now>=start&&now<=end)?RTM_CHARLA[m0+1]:null;}
 
